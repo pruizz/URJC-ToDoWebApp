@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap');
+
 .bottom-cards .card:has(.no-tasks-message),
 .bottom-cards .card:has(.empty) {
     min-height: 100px !important;
@@ -701,8 +703,6 @@ body {
         flex: 1;
     }
 
-    /* Importación de una fuente similar a la de la imagen */
-    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap');
 
     /* Estilos generales */
     body {

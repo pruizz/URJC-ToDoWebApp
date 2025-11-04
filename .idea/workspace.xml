@@ -4,12 +4,13 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="7db9f48c-7b90-4b95-8071-a54e0a701ad5" name="Changes" comment="fonts">
+    <list default="true" id="7db9f48c-7b90-4b95-8071-a54e0a701ad5" name="Changes" comment="Update user authentication flow: redirect on successful login, display username instead of name, and manage current user state.">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/public/app.js" beforeDir="false" afterPath="$PROJECT_DIR$/public/app.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/style/unique.css" beforeDir="false" afterPath="$PROJECT_DIR$/public/style/unique.css" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/toDoRouter.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/toDoRouter.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/toDoService.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/toDoService.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/views/aside.html" beforeDir="false" afterPath="$PROJECT_DIR$/views/aside.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/views/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/views/index.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -99,7 +100,10 @@
       <workItem from="1760432866962" duration="275000" />
       <workItem from="1760433145813" duration="6497000" />
       <workItem from="1760440681216" duration="3076000" />
-      <workItem from="1760527688944" duration="369000" />
+      <workItem from="1760527688944" duration="659000" />
+      <workItem from="1760698847608" duration="34000" />
+      <workItem from="1762160562260" duration="4782000" />
+      <workItem from="1762252201509" duration="1365000" />
     </task>
     <task id="LOCAL-00001" summary="style y paginas principales">
       <option name="closed" value="true" />
@@ -141,7 +145,15 @@
       <option name="project" value="LOCAL" />
       <updated>1760440359733</updated>
     </task>
-    <option name="localTasksCounter" value="6" />
+    <task id="LOCAL-00006" summary="Update user authentication flow: redirect on successful login, display username instead of name, and manage current user state.">
+      <option name="closed" value="true" />
+      <created>1760528152599</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1760528152599</updated>
+    </task>
+    <option name="localTasksCounter" value="7" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -152,6 +164,7 @@
     <MESSAGE value="form register" />
     <MESSAGE value="background photos fixed" />
     <MESSAGE value="signedIn" />
-    <option name="LAST_COMMIT_MESSAGE" value="signedIn" />
+    <MESSAGE value="Update user authentication flow: redirect on successful login, display username instead of name, and manage current user state." />
+    <option name="LAST_COMMIT_MESSAGE" value="Update user authentication flow: redirect on successful login, display username instead of name, and manage current user state." />
   </component>
 </project>

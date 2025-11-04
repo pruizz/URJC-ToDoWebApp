@@ -9,28 +9,40 @@ const dataPath = getUsersPath();
 
 let users = loadDataFromDisk();
 
+let idTask = 0;
 
-let tasks = new Map();
-let nextIdTasks = 0;
 
-export function addTask(task) {
-    let id = nextIdTasks++;
-    task.id = id.toString();
+export function addUserTask(task, user) {
+
     task.completed = false;
-    tasks.set(task.id, task);
+    task.id = idTask++;
+    user.tasks.push(task);
+    saveDataToDisk();
 }
 
-export function deleteTask(id) {
-    let task = getTask(id);
-    tasks.delete(id);
+export function deleteUserTask(id, user) {
+    let i = -1;
+    for (let j = 0; j < user.tasks.length; j++) {
+        if (user.tasks[j].id === id) {
+            i = j;
+            break;
+        }
+    }
+    let task = user.tasks.splice(i, 1)[0];
+    saveDataToDisk();
     return task;
 }
 
-export function getTasks() {
-    return [...tasks.values()];
+export function getAllTasks(user) {
+    if (user) {
+        return user.tasks;
+    }else{
+        return null;
+    }
 }
-export function getTask(id) {
-    return tasks.get(id);
+
+export function getOneTask(i, user) {
+    return user.tasks[i];
 }
 
 export function addUser(user){

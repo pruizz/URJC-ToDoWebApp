@@ -15,7 +15,7 @@ const upload = multer({ dest: UPLOADS_FOLDER });
 let currentUser = null;
 
 router.get("/", (req, res) => {
-    res.render("login", { tasks: toDoService.getTasks() });
+    res.render("login", { tasks: toDoService.getAllTasks(currentUser) });
 });
 
 router.get("/newTask", (req, res) => {
@@ -23,7 +23,10 @@ router.get("/newTask", (req, res) => {
 });
 
 router.get("/home", (req, res) => {
-    const allTasks = toDoService.getTasks();
+    if (!currentUser) {
+        return res.redirect("/");
+    }
+    const allTasks = toDoService.getAllTasks(currentUser);
     // Ordenar por fecha de creación descendente
     const recientes = allTasks
         .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
@@ -51,7 +54,7 @@ router.get("/home", (req, res) => {
 })
 
 router.get("/tasks", (req, res) => {
-    res.render("tasks", { tasks: toDoService.getTasks(), user: currentUser || { name: "Invitado" } });
+    res.render("tasks", { tasks: toDoService.getAllTasks(), user: currentUser || { name: "Invitado" } });
 })
 
 router.post("/task/add", (req, res) => {
@@ -64,7 +67,7 @@ router.post("/task/add", (req, res) => {
         completed: false,
         createdAt: new Date()
     }
-    toDoService.addTask(task);
+    toDoService.addUserTask(task, currentUser);
     // Si el formulario envía un campo redirectTo lo usamos, si no comprobamos el referer
     const redirectTo = req.body.redirectTo;
     if (redirectTo) {
@@ -95,9 +98,9 @@ router.post("/task/add", (req, res) => {
 }); */
 
 router.post("/tasks/:id/delete", (req, res) => {
-    let id = req.params.id;
-    toDoService.deleteTask(id);
-    res.redirect("/home");
+    let id = Number(req.params.index);
+    let result = toDoService.deleteUserTask(id, currentUser);
+    res.json(result);
 });
 
 router.post("/checkUser", (req, res) => {

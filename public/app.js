@@ -23,6 +23,24 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 });
 
+async function deleteTaskIndex(event, id) {
+
+    try {
+        const res = await fetch(`/tasks/${id}/delete`, {
+            method: 'POST'
+        });
+
+        if (res.ok) {
+            window.location.href = '/home';
+        } else {
+            alert('Error al borrar la tarea');
+        }
+    } catch (error) {
+        console.error('Error en la solicitud:', error);
+        alert('Error al borrar la tarea');
+    }
+}
+
 async function processTaskData(event) {
     event.preventDefault();
     const taskForm = document.getElementById('taskForm');
