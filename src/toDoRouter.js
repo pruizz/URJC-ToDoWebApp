@@ -27,11 +27,27 @@ router.get("/calendar", (req, res) => {
         return res.redirect("/");
     }
     const tasks = toDoService.getAllTasks(currentUser);
-    const calendarTasks = tasks.map(task => ({
-        title: task.title,
-        start: task.dueDate,
-        description: task.description
-    }));
+
+    const calendarTasks = tasks.map(task => {
+        let color = '#0d6efd'; // Default color (Bootstrap primary)
+        const priority = (task.priority || '').toLowerCase();
+
+        if (priority === 'high' || priority === 'alta') {
+            color = '#dc3545'; // Bootstrap danger color for high priority
+        } else if (priority === 'medium' || priority === 'media') {
+            color = '#ffc107'; // Bootstrap warning color for medium priority
+        } else if (priority === 'low' || priority === 'baja') {
+            color = '#198754'; // Bootstrap success color for low priority
+        }
+
+        return {
+            title: task.title,
+            start: task.dueDate,
+            description: task.description,
+            color: color // Add the color property here
+        };
+    });
+
     res.render("calendar", { tasks: JSON.stringify(calendarTasks) });
 });
 
