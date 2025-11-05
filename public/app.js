@@ -1,3 +1,5 @@
+
+
 // Modal Bootstrap para cerrar sesión
 document.addEventListener('DOMContentLoaded', function () {
     const logoutBtn = document.querySelector('.logout-link');

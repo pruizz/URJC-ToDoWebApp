@@ -22,6 +22,19 @@ router.get("/newTask", (req, res) => {
     res.render("newTask");
 });
 
+router.get("/calendar", (req, res) => {
+    if (!currentUser) {
+        return res.redirect("/");
+    }
+    const tasks = toDoService.getAllTasks(currentUser);
+    const calendarTasks = tasks.map(task => ({
+        title: task.title,
+        start: task.dueDate,
+        description: task.description
+    }));
+    res.render("calendar", { tasks: JSON.stringify(calendarTasks) });
+});
+
 router.get("/home", (req, res) => {
     if (!currentUser) {
         return res.redirect("/");
