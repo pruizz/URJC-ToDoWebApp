@@ -116,6 +116,11 @@ router.post("/tasks/:id/delete", (req, res) => {
     res.json(result);
 });
 
+router.post("/currentUser/null", (req, res) => {
+    currentUser = null;
+    res.json(true);
+});
+
 router.post("/checkUser", (req, res) => {
     let user_login = req.body;
 

@@ -17,10 +17,17 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
     if (confirmBtn) {
-        confirmBtn.addEventListener('click', function () {
+        confirmBtn.addEventListener('click', async function () {
             // Aquí puedes redirigir o hacer logout
             // Redirigir a la página de login al confirmar cierre de sesión
-            window.location.href = '/';
+            const res = await fetch(`/currentUser/null`, {
+                method: 'POST'
+            });
+            if (res.ok) {
+                window.location.href = '/';
+            } else {
+                alert('Error al cerrar sesión');
+            }
         });
     }
 });
