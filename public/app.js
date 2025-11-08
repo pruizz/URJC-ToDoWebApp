@@ -1,33 +1,69 @@
 
 
 // Modal Bootstrap para cerrar sesión
-document.addEventListener('DOMContentLoaded', function () {
-    const logoutBtn = document.querySelector('.logout-link');
-    const confirmBtn = document.getElementById('confirmLogout');
-    let logoutModal;
-    if (window.bootstrap) {
-        logoutModal = new bootstrap.Modal(document.getElementById('logoutModal'));
-    }
-    if (logoutBtn) {
-        logoutBtn.addEventListener('click', function (e) {
-            e.preventDefault();
-            if (logoutModal) {
-                logoutModal.show();
-            }
+document.addEventListener('DOMContentLoaded', () => {
+    const addTaskBtn = document.getElementById('add-task-btn');
+    const modalTareaElement = document.getElementById('modalTarea');
+
+    if (addTaskBtn && modalTareaElement) {
+        const modalTarea = new bootstrap.Modal(modalTareaElement);
+        // Obtenemos el formulario primero para poder usarlo
+        const formTarea = document.getElementById('formTarea');
+
+        // --- INICIO DE LA MODIFICACIÓN ---
+        // Obtenemos el campo de la fecha (basado en tu código de submit)
+        const fechaInput = formTarea.fechaTarea; 
+
+        if (fechaInput) {
+            // Calcular la fecha de hoy en formato YYYY-MM-DD
+            const today = new Date();
+            const yyyy = today.getFullYear();
+            // getMonth() es 0-indexado (0=Ene, 11=Dic), por eso +1
+            const mm = String(today.getMonth() + 1).padStart(2, '0'); 
+            const dd = String(today.getDate()).padStart(2, '0');
+            const minDate = `${yyyy}-${mm}-${dd}`;
+
+            // Establecer el atributo 'min' para bloquear fechas pasadas
+            fechaInput.min = minDate;
+        }
+        // --- FIN DE LA MODIFICACIÓN ---
+
+        // Abrir modal al hacer clic en "Añadir tarea"
+        addTaskBtn.addEventListener('click', () => {
+            modalTarea.show();
         });
-    }
-    if (confirmBtn) {
-        confirmBtn.addEventListener('click', async function () {
-            // Aquí puedes redirigir o hacer logout
-            // Redirigir a la página de login al confirmar cierre de sesión
-            const res = await fetch(`/currentUser/null`, {
-                method: 'POST'
+
+        // Manejar envío del formulario
+        formTarea.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            // Obtener los datos del formulario
+            const data = {
+                title: formTarea.tituloTarea.value.trim(),
+                description: formTarea.descripcionTarea.value.trim(),
+                dueDate: fechaInput.value, // Usamos la referencia que ya teníamos
+                priority: formTarea.prioridadTarea.value
+            };
+
+            // Enviar la tarea al backend
+            const response = await fetch('/task/add', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
             });
-            if (res.ok) {
-                window.location.href = '/';
+            if (response.ok) {
+                if (window.location.pathname === '/tasks') {
+                    window.location.href = '/tasks';
+                } else {
+                    window.location.href = '/home';
+                }
             } else {
-                alert('Error al cerrar sesión');
+                alert('Error al añadir la tarea');
             }
+            modalTarea.hide();
+            formTarea.reset();
         });
     }
 });
@@ -182,54 +218,6 @@ async function newUser(event) {
     }
 
 }
-
-document.addEventListener('DOMContentLoaded', () => {
-    const addTaskBtn = document.getElementById('add-task-btn');
-    const modalTareaElement = document.getElementById('modalTarea');
-
-    if (addTaskBtn && modalTareaElement) {
-        const modalTarea = new bootstrap.Modal(modalTareaElement);
-
-        // Abrir modal al hacer clic en "Añadir tarea"
-        addTaskBtn.addEventListener('click', () => {
-            modalTarea.show();
-        });
-
-        // Manejar envío del formulario
-        const formTarea = document.getElementById('formTarea');
-        formTarea.addEventListener('submit', async (e) => {
-            e.preventDefault();
-
-            // Obtener los datos del formulario con los nombres que espera el backend
-            const data = {
-                title: formTarea.tituloTarea.value.trim(),
-                description: formTarea.descripcionTarea.value.trim(),
-                dueDate: formTarea.fechaTarea.value,
-                priority: formTarea.prioridadTarea.value
-            };
-
-            // Enviar la tarea al backend
-            const response = await fetch('/task/add', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(data)
-            });
-            if (response.ok) {
-                if (window.location.pathname === '/tasks') {
-                    window.location.href = '/tasks';
-                } else {
-                    window.location.href = '/home';
-                }
-            } else {
-                alert('Error al añadir la tarea');
-            }
-            modalTarea.hide();
-            formTarea.reset();
-        });
-    }
-});
 
 // Asignar color de prioridad y completado en dashboard (index)
 document.addEventListener('DOMContentLoaded', function () {
