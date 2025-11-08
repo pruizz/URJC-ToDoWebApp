@@ -132,6 +132,18 @@ router.post("/tasks/:id/delete", (req, res) => {
     res.json(result);
 });
 
+router.post("/tasks/:id/update", (req, res) => {
+    let id = Number(req.params.id);
+    let updatedTask = {
+        title: req.body.title,
+        description: req.body.description,
+        dueDate: req.body.dueDate,
+        priority: req.body.priority
+    };
+    let result = toDoService.updateUserTask(id, updatedTask, currentUser);
+    res.json(result);
+});
+
 router.post("/currentUser/null", (req, res) => {
     currentUser = null;
     res.json(true);

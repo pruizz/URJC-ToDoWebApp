@@ -41,6 +41,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Abrir modal al hacer clic en "Añadir tarea"
         addTaskBtn.addEventListener('click', () => {
+            // Desactivar el modo edición
+            formTarea.editMode.value = 'false';
+            formTarea.editTaskId.value = '';
+            // Cambiar el título del modal
+            document.getElementById('modalTareaLabel').textContent = 'Añadir Nueva Tarea';
+            document.getElementById('submitBtn').textContent = 'Añadir';
+            // Vaciar el formulario
+            formTarea.reset();
             modalTarea.show();
         });
 
@@ -52,18 +60,31 @@ document.addEventListener('DOMContentLoaded', () => {
             const data = {
                 title: formTarea.tituloTarea.value.trim(),
                 description: formTarea.descripcionTarea.value.trim(),
-                dueDate: fechaInput.value, // Usamos la referencia que ya teníamos
+                dueDate: fechaInput.value,
                 priority: formTarea.prioridadTarea.value
             };
 
-            // Enviar la tarea al backend
-            const response = await fetch('/task/add', {
-                method: 'POST',
+            // Comprobar si estamos en modo edición
+            const isEditMode = formTarea.editMode.value === 'true';
+            const taskId = formTarea.editTaskId.value;
+
+            // Determinar la URL y el método HTTP según el modo
+            let url = '/task/add';
+            let method = 'POST';
+            if (isEditMode && taskId) {
+                url = `/tasks/${taskId}/update`;
+                method = 'POST'; // Using POST for simplicity, could be PUT
+            }
+
+            // Enviar la tarea al backend (añadir o actualizar)
+            const response = await fetch(url, {
+                method: method,
                 headers: {
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify(data)
             });
+
             if (response.ok) {
                 if (window.location.pathname === '/tasks') {
                     window.location.href = '/tasks';
@@ -71,10 +92,17 @@ document.addEventListener('DOMContentLoaded', () => {
                     window.location.href = '/home';
                 }
             } else {
-                alert('Error al añadir la tarea');
+                alert(isEditMode ? 'Error al actualizar la tarea' : 'Error al añadir la tarea');
             }
+
             modalTarea.hide();
             formTarea.reset();
+            
+            // Reset edit mode
+            formTarea.editMode.value = 'false';
+            formTarea.editTaskId.value = '';
+            document.getElementById('modalTareaLabel').textContent = 'Añadir Nueva Tarea';
+            document.getElementById('submitBtn').textContent = 'Añadir';
         });
     }
 });
@@ -95,6 +123,27 @@ async function deleteTaskIndex(event, id) {
         console.error('Error en la solicitud:', error);
         alert('Error al borrar la tarea');
     }
+}
+
+// Function to edit a task - populates the modal with existing task data
+function editTask(id, title, description, dueDate, priority) {
+    // Set edit mode
+    document.getElementById('editMode').value = 'true';
+    document.getElementById('editTaskId').value = id;
+    
+    // Populate form fields
+    document.getElementById('tituloTarea').value = title;
+    document.getElementById('descripcionTarea').value = description;
+    document.getElementById('fechaTarea').value = dueDate;
+    document.getElementById('prioridadTarea').value = priority;
+    
+    // Update modal title and button
+    document.getElementById('modalTareaLabel').textContent = 'Editar Tarea';
+    document.getElementById('submitBtn').textContent = 'Actualizar';
+    
+    // Show modal
+    const modal = new bootstrap.Modal(document.getElementById('modalTarea'));
+    modal.show();
 }
 
 async function processTaskData(event) {

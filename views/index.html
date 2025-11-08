@@ -66,21 +66,28 @@
                             </div>
                         </div>
                         <div class="mini-task-actions">
-                            <button class="btn-action btn-edit" title="Editar tarea" onclick="alert('Función de edición no implementada')">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                    <path d="M12 20h9a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2H7.5a2 2 0 0 0-2 2v13"></path>
-                                    <path d="M18 14h-7a2 2 0 0 0-2 2v2a2 2 0 0 0 2 2h7"></path>
-                                    <path d="M6 18H4a2 2 0 0 0-2 2v2"></path>
+                            <button class="btn-action btn-edit" title="Editar tarea"
+                                onclick="editTask('{{id}}', '{{titulo}}', '', '{{fecha}}', '{{priority}}')">
+                                <svg fill="#000000" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg"
+                                    xmlns:xlink="http://www.w3.org/1999/xlink" width="20" height="20"
+                                    viewBox="0 0 494.936 494.936" xml:space="preserve">
+                                    <g>
+                                        <g><path d="M389.844,182.85c-6.743,0-12.21,5.467-12.21,12.21v222.968c0,23.562-19.174,42.735-42.736,42.735H67.157c-23.562,0-42.736-19.174-42.736-42.735V150.285c0-23.562,19.174-42.735,42.736-42.735h267.741c6.743,0,12.21-5.467,12.21-12.21s-5.467-12.21-12.21-12.21H67.157C30.126,83.13,0,113.255,0,150.285v267.743c0,37.029,30.126,67.155,67.157,67.155h267.741c37.03,0,67.156-30.126,67.156-67.155V195.061C402.054,188.318,396.587,182.85,389.844,182.85z" /><path d="M483.876,20.791c-14.72-14.72-38.669-14.714-53.377,0L221.352,229.944c-0.28,0.28-3.434,3.559-4.251,5.396l-28.963,65.069c-2.057,4.619-1.056,10.027,2.521,13.6c2.337,2.336,5.461,3.576,8.639,3.576c1.675,0,3.362-0.346,4.96-1.057l65.07-28.963c1.83-0.815,5.114-3.97,5.396-4.25L483.876,74.169c7.131-7.131,11.06-16.61,11.06-26.692C494.936,37.396,491.007,27.915,483.876,20.791z M466.61,56.897L257.457,266.05c-0.035,0.036-0.055,0.078-0.089,0.107l-33.989,15.131L238.51,247.3c0.03-0.036,0.071-0.055,0.107-0.09L447.765,38.058c5.038-5.039,13.819-5.033,18.846,0.005c2.518,2.51,3.905,5.855,3.905,9.414C470.516,51.036,469.127,54.38,466.61,56.897z" /></g>
+                                    </g>
                                 </svg>
                             </button>
 
-                                <button type="button" class="btn-action btn-delete" title="Eliminar tarea" onclick="deleteTaskIndex(event, {{id}})">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                        <polyline points="3 6 5 6 21 6"></polyline>
-                                        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
-                                    </svg>
-                                </button>
+                            <button type="button" class="btn-action btn-delete" title="Eliminar tarea"
+                                onclick="deleteTaskIndex(event, '{{id}}')">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
+                                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                    stroke-linejoin="round">
+                                    <polyline points="3 6 5 6 21 6"></polyline>
+                                    <path
+                                        d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2">
+                                    </path>
+                                </svg>
+                            </button>
 
                         </div>
                     </div>
@@ -103,16 +110,22 @@
             <div class="modal-content modal-tarea custom-modal-tarea">
                 <div class="modal-header">
                     <h5 class="modal-title" id="modalTareaLabel">Añadir Nueva Tarea</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar" style="background: none; border: none; padding: 0; display: flex; align-items: center; justify-content: center; height: 40px; width: 40px;">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="display: block; margin: auto;">
-                            <path d="M6 6L18 18" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/>
-                            <path d="M6 18L18 6" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"
+                        style="background: none; border: none; padding: 0; display: flex; align-items: center; justify-content: center; height: 40px; width: 40px;">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"
+                            style="display: block; margin: auto;">
+                            <path d="M6 6L18 18" stroke="#fff" stroke-width="2.5" stroke-linecap="round" />
+                            <path d="M6 18L18 6" stroke="#fff" stroke-width="2.5" stroke-linecap="round" />
                         </svg>
                     </button>
                 </div>
 
                 <div class="modal-body">
                     <form id="formTarea">
+                        <!-- Hidden fields for edit mode -->
+                        <input type="hidden" id="editMode" name="editMode" value="false">
+                        <input type="hidden" id="editTaskId" name="editTaskId" value="">
+
                         <div class="mb-3">
                             <label for="tituloTarea" class="form-label">Título</label>
                             <input type="text" class="form-control" id="tituloTarea"
@@ -144,7 +157,7 @@
 
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                    <button type="submit" class="btn custom-add-btn" form="formTarea">Añadir</button>
+                    <button type="submit" class="btn custom-add-btn" id="submitBtn" form="formTarea">Añadir</button>
                 </div>
             </div>
         </div>

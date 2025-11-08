@@ -48,8 +48,7 @@
                             </div>
                         </div>
                         <div class="task-actions">
-                            <!-- Edit/complete buttons: keep as UI elements (backend routes not implemented) -->
-                            <button class="btn-action btn-edit" title="Editar tarea" onclick="alert('Función de edición no implementada')">
+                            <button class="btn-action btn-edit" title="Editar tarea" onclick="editTask('{{id}}', '{{title}}', '{{description}}', '{{dueDate}}', '{{priority}}')">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                                     stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                     <path d="M12 20h9a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2H7.5a2 2 0 0 0-2 2v13"></path>
@@ -125,6 +124,10 @@
 
             <div class="modal-body">
                 <form id="formTarea" method="post" action="/task/add">
+                    <!-- Hidden fields for edit mode -->
+                    <input type="hidden" id="editMode" name="editMode" value="false">
+                    <input type="hidden" id="editTaskId" name="editTaskId" value="">
+                    
                     <div class="mb-3">
                         <label for="tituloTarea" class="form-label">Título</label>
                         <input type="text" class="form-control" id="tituloTarea" name="title"
@@ -156,7 +159,7 @@
 
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                <button type="submit" class="btn custom-add-btn" form="formTarea">Añadir</button>
+                <button type="submit" class="btn custom-add-btn" id="submitBtn" form="formTarea">Añadir</button>
             </div>
         </div>
     </div>

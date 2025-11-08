@@ -33,6 +33,26 @@ export function deleteUserTask(id, user) {
     return task;
 }
 
+export function updateUserTask(id, updatedTask, user) {
+    let taskIndex = -1;
+    for (let j = 0; j < user.tasks.length; j++) {
+        if (user.tasks[j].id === id) {
+            taskIndex = j;
+            break;
+        }
+    }
+    if (taskIndex !== -1) {
+        // Preserve the original id, createdAt, and completed status
+        updatedTask.id = user.tasks[taskIndex].id;
+        updatedTask.createdAt = user.tasks[taskIndex].createdAt;
+        updatedTask.completed = user.tasks[taskIndex].completed;
+        user.tasks[taskIndex] = updatedTask;
+        saveDataToDisk();
+        return updatedTask;
+    }
+    return null;
+}
+
 export function getAllTasks(user) {
     if (user) {
         return user.tasks;
