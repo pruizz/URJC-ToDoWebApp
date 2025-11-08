@@ -178,7 +178,7 @@ router.post("/newUser", (req, res) => {
         email: userAux.email,
         password: userAux.password,
         badge: [],
-        profile_photo: "default.png",
+        profile_photo: userAux.profile_photo || "https://cdn-icons-png.flaticon.com/512/149/149071.png",
         tasks: []
     }
 

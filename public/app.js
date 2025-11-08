@@ -1,7 +1,18 @@
 
+// Helper function to convert file to base64 data string
+function fileToBase64(file) {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = error => reject(error);
+    });
+}
 
 // Modal Bootstrap para cerrar sesión
 document.addEventListener('DOMContentLoaded', () => {
+
+
     const addTaskBtn = document.getElementById('add-task-btn');
     const modalTareaElement = document.getElementById('modalTarea');
 
@@ -12,14 +23,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // --- INICIO DE LA MODIFICACIÓN ---
         // Obtenemos el campo de la fecha (basado en tu código de submit)
-        const fechaInput = formTarea.fechaTarea; 
+        const fechaInput = formTarea.fechaTarea;
 
         if (fechaInput) {
             // Calcular la fecha de hoy en formato YYYY-MM-DD
             const today = new Date();
             const yyyy = today.getFullYear();
             // getMonth() es 0-indexado (0=Ene, 11=Dic), por eso +1
-            const mm = String(today.getMonth() + 1).padStart(2, '0'); 
+            const mm = String(today.getMonth() + 1).padStart(2, '0');
             const dd = String(today.getDate()).padStart(2, '0');
             const minDate = `${yyyy}-${mm}-${dd}`;
 
@@ -90,7 +101,7 @@ async function processTaskData(event) {
     event.preventDefault();
     const taskForm = document.getElementById('taskForm');
 
-    
+
     const formData = new FormData(event.target);
     const response = await fetch('/task/add', {
         method: 'POST',
@@ -101,7 +112,6 @@ async function processTaskData(event) {
         window.location.href = '/home';
     }
 }
-
 
 async function checkUser(event) {
     event.preventDefault();
@@ -197,7 +207,20 @@ async function newUser(event) {
     const username = document.getElementById("usernameR").value;
     const email = document.getElementById("emailR").value;
     const password = document.getElementById("passwordR2").value;
+    const fotoInput = document.getElementById("formFileSm");
 
+    let profilePhotoData = null;
+
+    // If a file is selected, convert it to base64
+    if (fotoInput.files && fotoInput.files[0]) {
+        try {
+            profilePhotoData = await fileToBase64(fotoInput.files[0]);
+        } catch (error) {
+            console.error('Error converting file to base64:', error);
+            alert('Error processing the image file');
+            return;
+        }
+    }
 
     const response = await fetch("/newUser", {
         method: "POST",
@@ -207,7 +230,8 @@ async function newUser(event) {
         body: JSON.stringify({
             username: username,
             email: email,
-            password: password
+            password: password,
+            profile_photo: profilePhotoData || null
         })
     })
 
