@@ -57,5 +57,32 @@
                 "id": 0
             }
         ]
+    },
+    "ad": {
+        "username": "ad",
+        "email": "ad@ad.com",
+        "password": "123456",
+        "badge": [],
+        "profile_photo": "https://cdn-icons-png.flaticon.com/512/149/149071.png",
+        "tasks": [
+            {
+                "title": "lkjhgf",
+                "description": "",
+                "dueDate": "2025-11-21",
+                "priority": "High",
+                "completed": true,
+                "createdAt": "2025-11-10T18:12:45.461Z",
+                "id": 0
+            },
+            {
+                "title": "dfsf",
+                "description": "sdfsd",
+                "dueDate": "2025-11-19",
+                "priority": "Medium",
+                "completed": false,
+                "createdAt": "2025-11-10T17:59:18.308Z",
+                "id": 0
+            }
+        ]
     }
 }

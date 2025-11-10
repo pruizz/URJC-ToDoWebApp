@@ -48,7 +48,7 @@
                             </div>
                         </div>
                         <div class="task-actions">
-                            <!-- Edit/complete buttons: keep as UI elements (backend routes not implemented) -->
+                            <!-- Edit button (not implemented) -->
                             <button class="btn-action btn-edit" title="Editar tarea"
                                 onclick="alert('Función de edición no implementada')">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
@@ -59,6 +59,17 @@
                                     <path d="M6 18H4a2 2 0 0 0-2 2v2"></path>
                                 </svg>
                             </button>
+
+                            <!-- Complete button (restored) -->
+                            <button type="button" class="btn-action btn-complete" title="Marcar como completada"
+                                data-id="{{id}}" aria-label="Marcar tarea {{title}} como completada">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
+                                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                    stroke-linejoin="round">
+                                    <polyline points="20 6 9 17 4 12"></polyline>
+                                </svg>
+                            </button>
+
                             <!-- Delete form -->
                             <form method="post" action="/tasks/{{id}}/delete" style="display:inline;"
                                 onsubmit="deleteTask(event, '{{id}}')">
@@ -182,19 +193,39 @@
             if (el.dataset.completed === 'true') el.classList.add('completed');
         });
 
+        // Centralized filter application function
+        function applyFilter(filter) {
+            document.querySelectorAll('.task-card').forEach(card => {
+                // reset display
+                card.style.display = '';
+
+                if (!filter || filter === 'all') return;
+
+                // determine completed state robustly (dataset or class)
+                const isCompleted = (card.dataset.completed === 'true') || card.classList.contains('completed');
+
+                if (filter === 'pending' && isCompleted) {
+                    card.style.display = 'none';
+                    return;
+                }
+                if (filter === 'completed' && !isCompleted) {
+                    card.style.display = 'none';
+                    return;
+                }
+                if (filter.startsWith('priority-') && !card.classList.contains(filter)) {
+                    card.style.display = 'none';
+                    return;
+                }
+            });
+        }
+
         // Filter buttons
         const filterButtons = document.querySelectorAll('.btn-filter');
         filterButtons.forEach(btn => btn.addEventListener('click', function () {
             filterButtons.forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
             const filter = btn.dataset.filter;
-            document.querySelectorAll('.task-card').forEach(card => {
-                card.style.display = '';
-                if (!filter || filter === 'all') return;
-                if (filter === 'pending' && card.classList.contains('completed')) card.style.display = 'none';
-                else if (filter === 'completed' && !card.classList.contains('completed')) card.style.display = 'none';
-                else if (filter.startsWith('priority-') && !card.classList.contains(filter)) card.style.display = 'none';
-            });
+            applyFilter(filter);
         }));
 
         // Complete button behavior using fetch
@@ -208,17 +239,18 @@
                         const card = document.getElementById(`task-${id}`);
                         if (card) {
                             card.classList.toggle('completed');
+                            // keep dataset in sync with class for future checks
+                            if (card.classList.contains('completed')) card.dataset.completed = 'true';
+                            else card.dataset.completed = 'false';
+
                             // move card to end of list so completed tasks go to bottom
                             const list = document.querySelector('.tasks-list');
                             list.appendChild(card);
 
-                            // re-apply active filter to possibly hide it if we're viewing pending only
+                            // re-apply active filter to possibly hide/show accordingly
                             const active = document.querySelector('.btn-filter.active');
-                            if (active) {
-                                const filter = active.dataset.filter;
-                                if (filter === 'pending' && card.classList.contains('completed')) card.style.display = 'none';
-                                if (filter === 'completed' && !card.classList.contains('completed')) card.style.display = 'none';
-                            }
+                            const activeFilter = active ? active.dataset.filter : null;
+                            applyFilter(activeFilter);
                         }
                     } else {
                         alert('Error al marcar la tarea');

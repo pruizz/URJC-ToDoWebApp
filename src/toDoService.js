@@ -1,6 +1,6 @@
 import fs from "fs";
 import path from "path";
-import {fileURLToPath} from "url";
+import { fileURLToPath } from "url";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -56,8 +56,8 @@ export function updateUserTask(id, updatedTask, user) {
 export function getAllTasks(user) {
     if (user) {
         return user.tasks;
-    }else{
-        return null;
+    } else {
+        return [];
     }
 }
 
@@ -65,7 +65,7 @@ export function getOneTask(i, user) {
     return user.tasks[i];
 }
 
-export function addUser(user){
+export function addUser(user) {
     users.set(user.username, user);
     saveDataToDisk();
     return user;
@@ -75,7 +75,7 @@ export function getUser(username) {
     return users.get(username);
 }
 
-export function deleteUser(username){
+export function deleteUser(username) {
     users.delete(username);
     saveDataToDisk();
 }
@@ -97,9 +97,9 @@ export function checkEmailAvailable(email) {
 
 export function checkUserPass(username, password) {
     let user = getUser(username);
-    if (user && user.password === password){
+    if (user && user.password === password) {
         return user
-    }else{
+    } else {
         return null
     }
 }

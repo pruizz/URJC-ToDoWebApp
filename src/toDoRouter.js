@@ -83,7 +83,11 @@ router.get("/home", (req, res) => {
 })
 
 router.get("/tasks", (req, res) => {
-    res.render("tasks", { tasks: toDoService.getAllTasks(), user: currentUser || { name: "Invitado" } });
+    if (!currentUser) {
+        return res.redirect('/');
+    }
+    const tasks = toDoService.getAllTasks(currentUser) || [];
+    res.render("tasks", { tasks: tasks, user: currentUser || { name: "Invitado" } });
 })
 
 router.post("/task/add", (req, res) => {
@@ -95,6 +99,10 @@ router.post("/task/add", (req, res) => {
         priority: req.body.priority,
         completed: false,
         createdAt: new Date()
+    }
+    if (!currentUser) {
+        // no user logged in -> can't add task
+        return res.redirect('/');
     }
     toDoService.addUserTask(task, currentUser);
     // Si el formulario envía un campo redirectTo lo usamos, si no comprobamos el referer
@@ -113,10 +121,13 @@ router.post("/task/add", (req, res) => {
 
 // Toggle completion state for a task
 router.post('/tasks/:id/toggleComplete', (req, res) => {
-    const id = req.params.id;
-    const task = toDoService.getTask(id);
+    if (!currentUser) return res.redirect('/');
+    const id = Number(req.params.id);
+    const task = currentUser.tasks.find(t => t.id === id);
     if (task) {
         task.completed = !task.completed;
+        // persist
+        toDoService.saveDataToDisk();
     }
 
     const redirectTo = req.body.redirectTo;
@@ -142,9 +153,10 @@ router.post('/tasks/:id/toggleComplete', (req, res) => {
 }); */
 
 router.post("/tasks/:id/delete", (req, res) => {
-    let id = Number(req.params.index);
+    if (!currentUser) return res.json(false);
+    let id = Number(req.params.id);
     let result = toDoService.deleteUserTask(id, currentUser);
-    res.json(result);
+    res.json(!!result);
 });
 
 router.post("/tasks/:id/update", (req, res) => {
