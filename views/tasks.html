@@ -18,12 +18,12 @@
 
             <div class="tasks-container">
                 <div class="filters">
-                    <button class="btn btn-filter active">Todos</button>
-                    <button class="btn btn-filter">Pendientes</button>
-                    <button class="btn btn-filter">Completadas</button>
-                    <button class="btn btn-filter">Alta Prioridad</button>
-                    <button class="btn btn-filter">Media Prioridad</button>
-                    <button class="btn btn-filter">Baja Prioridad</button>
+                    <button class="btn btn-filter active" data-filter="all">Todos</button>
+                    <button class="btn btn-filter" data-filter="pending">Pendientes</button>
+                    <button class="btn btn-filter" data-filter="completed">Completadas</button>
+                    <button class="btn btn-filter" data-filter="priority-high">Alta Prioridad</button>
+                    <button class="btn btn-filter" data-filter="priority-medium">Media Prioridad</button>
+                    <button class="btn btn-filter" data-filter="priority-low">Baja Prioridad</button>
                 </div>
                 <div class="tasks-list">
 
@@ -48,17 +48,28 @@
                             </div>
                         </div>
                         <div class="task-actions">
-                            <!-- Edit/complete buttons: keep as UI elements (backend routes not implemented) -->
-                            <button class="btn-action btn-edit" title="Editar tarea" onclick="alert('Función de edición no implementada')">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <!-- Complete button -->
+                            <button class="btn-action btn-complete" title="Marcar como completada" data-id="{{id}}">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
+                                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                    stroke-linejoin="round">
+                                    <polyline points="20 6 9 17 4 12"></polyline>
+                                </svg>
+                            </button>
+                            <!-- Edit button -->
+                            <button class="btn-action btn-edit" title="Editar tarea"
+                                onclick="alert('Función de edición no implementada')">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
+                                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                    stroke-linejoin="round">
                                     <path d="M12 20h9a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2H7.5a2 2 0 0 0-2 2v13"></path>
                                     <path d="M18 14h-7a2 2 0 0 0-2 2v2a2 2 0 0 0 2 2h7"></path>
                                     <path d="M6 18H4a2 2 0 0 0-2 2v2"></path>
                                 </svg>
                             </button>
                             <!-- Delete form -->
-                            <form method="post" action="/tasks/{{id}}/delete" style="display:inline;" onsubmit="deleteTask(event, '{{id}}')">
+                            <form method="post" action="/tasks/{{id}}/delete" style="display:inline;"
+                                onsubmit="deleteTask(event, '{{id}}')">
                                 <button type="submit" class="btn-action btn-delete" title="Eliminar tarea">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
                                         fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
@@ -161,3 +172,66 @@
         </div>
     </div>
 </div>
+
+<script>
+    // Filters and complete handling
+    document.addEventListener('DOMContentLoaded', function () {
+        // map priority classes from data attribute if needed
+        document.querySelectorAll('.task-card').forEach(function (el) {
+            var p = (el.dataset.priority || '').toLowerCase();
+            if (p === 'high' || p === 'alta') el.classList.add('priority-high');
+            else if (p === 'medium' || p === 'media') el.classList.add('priority-medium');
+            else if (p === 'low' || p === 'baja') el.classList.add('priority-low');
+
+            if (el.dataset.completed === 'true') el.classList.add('completed');
+        });
+
+        // Filter buttons
+        const filterButtons = document.querySelectorAll('.btn-filter');
+        filterButtons.forEach(btn => btn.addEventListener('click', function () {
+            filterButtons.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            const filter = btn.dataset.filter;
+            document.querySelectorAll('.task-card').forEach(card => {
+                card.style.display = '';
+                if (!filter || filter === 'all') return;
+                if (filter === 'pending' && card.classList.contains('completed')) card.style.display = 'none';
+                else if (filter === 'completed' && !card.classList.contains('completed')) card.style.display = 'none';
+                else if (filter.startsWith('priority-') && !card.classList.contains(filter)) card.style.display = 'none';
+            });
+        }));
+
+        // Complete button behavior using fetch
+        document.querySelectorAll('.btn-complete').forEach(btn => {
+            btn.addEventListener('click', async function () {
+                const id = btn.dataset.id;
+                try {
+                    const res = await fetch(`/tasks/${id}/toggleComplete`, { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body: new URLSearchParams({ redirectTo: '/tasks' }) });
+                    if (res.ok) {
+                        // toggle class on card
+                        const card = document.getElementById(`task-${id}`);
+                        if (card) {
+                            card.classList.toggle('completed');
+                            // move card to end of list so completed tasks go to bottom
+                            const list = document.querySelector('.tasks-list');
+                            list.appendChild(card);
+
+                            // re-apply active filter to possibly hide it if we're viewing pending only
+                            const active = document.querySelector('.btn-filter.active');
+                            if (active) {
+                                const filter = active.dataset.filter;
+                                if (filter === 'pending' && card.classList.contains('completed')) card.style.display = 'none';
+                                if (filter === 'completed' && !card.classList.contains('completed')) card.style.display = 'none';
+                            }
+                        }
+                    } else {
+                        alert('Error al marcar la tarea');
+                    }
+                } catch (e) {
+                    console.error(e);
+                    alert('Error de red');
+                }
+            });
+        });
+    });
+</script>

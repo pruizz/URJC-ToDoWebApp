@@ -79,6 +79,21 @@ router.post("/task/add", (req, res) => {
     res.redirect('/home');
 });
 
+// Toggle completion state for a task
+router.post('/tasks/:id/toggleComplete', (req, res) => {
+    const id = req.params.id;
+    const task = toDoService.getTask(id);
+    if (task) {
+        task.completed = !task.completed;
+    }
+
+    const redirectTo = req.body.redirectTo;
+    if (redirectTo) return res.redirect(redirectTo);
+    const ref = req.get('referer') || '';
+    if (ref.includes('/tasks')) return res.redirect('/tasks');
+    return res.redirect('/home');
+});
+
 /* router.post("/task/add", upload.single("image"),(req,res) => {
     let image = req.file ? req.file.filename : undefined;
 
