@@ -1,0 +1,28 @@
+{{>header}}
+<div class="d-flex">
+    {{>aside}}
+    <main class="container-fluid p-4">
+        <div id='calendar'></div>
+    </main>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const calendarEl = document.getElementById('calendar');
+        const calendar = new FullCalendar.Calendar(calendarEl, {
+            initialView: 'dayGridMonth',
+            events: {{{tasks}}},
+            eventDidMount: function(info) {
+                var tooltip = new bootstrap.Tooltip(info.el, {
+                    title: info.event.extendedProps.description,
+                    placement: 'top',
+                    trigger: 'hover',
+                    container: 'body'
+                });
+            }
+        });
+        calendar.render();
+    });
+</script>
+
+{{>footer}}

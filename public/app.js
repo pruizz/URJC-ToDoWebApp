@@ -1,32 +1,156 @@
+
+// Helper function to convert file to base64 data string
+function fileToBase64(file) {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = error => reject(error);
+    });
+}
+
 // Modal Bootstrap para cerrar sesión
-document.addEventListener('DOMContentLoaded', function () {
-    const logoutBtn = document.querySelector('.logout-link');
-    const confirmBtn = document.getElementById('confirmLogout');
-    let logoutModal;
-    if (window.bootstrap) {
-        logoutModal = new bootstrap.Modal(document.getElementById('logoutModal'));
-    }
-    if (logoutBtn) {
-        logoutBtn.addEventListener('click', function (e) {
-            e.preventDefault();
-            if (logoutModal) {
-                logoutModal.show();
-            }
+document.addEventListener('DOMContentLoaded', () => {
+
+
+    const addTaskBtn = document.getElementById('add-task-btn');
+    const modalTareaElement = document.getElementById('modalTarea');
+
+    if (addTaskBtn && modalTareaElement) {
+        const modalTarea = new bootstrap.Modal(modalTareaElement);
+        // Obtenemos el formulario primero para poder usarlo
+        const formTarea = document.getElementById('formTarea');
+
+        // --- INICIO DE LA MODIFICACIÓN ---
+        // Obtenemos el campo de la fecha (basado en tu código de submit)
+        const fechaInput = formTarea.fechaTarea;
+
+        if (fechaInput) {
+            // Calcular la fecha de hoy en formato YYYY-MM-DD
+            const today = new Date();
+            const yyyy = today.getFullYear();
+            // getMonth() es 0-indexado (0=Ene, 11=Dic), por eso +1
+            const mm = String(today.getMonth() + 1).padStart(2, '0');
+            const dd = String(today.getDate()).padStart(2, '0');
+            const minDate = `${yyyy}-${mm}-${dd}`;
+
+            // Establecer el atributo 'min' para bloquear fechas pasadas
+            fechaInput.min = minDate;
+        }
+        // --- FIN DE LA MODIFICACIÓN ---
+
+        // Abrir modal al hacer clic en "Añadir tarea"
+        addTaskBtn.addEventListener('click', () => {
+            // Desactivar el modo edición
+            formTarea.editMode.value = 'false';
+            formTarea.editTaskId.value = '';
+            // Cambiar el título del modal
+            document.getElementById('modalTareaLabel').textContent = 'Añadir Nueva Tarea';
+            document.getElementById('submitBtn').textContent = 'Añadir';
+            // Vaciar el formulario
+            formTarea.reset();
+            modalTarea.show();
         });
-    }
-    if (confirmBtn) {
-        confirmBtn.addEventListener('click', function () {
-            // Aquí puedes redirigir o hacer logout
-            // Redirigir a la página de login al confirmar cierre de sesión
-            window.location.href = '/';
+
+        // Manejar envío del formulario
+        formTarea.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            // Obtener los datos del formulario
+            const data = {
+                title: formTarea.tituloTarea.value.trim(),
+                description: formTarea.descripcionTarea.value.trim(),
+                dueDate: fechaInput.value,
+                priority: formTarea.prioridadTarea.value
+            };
+
+            // Comprobar si estamos en modo edición
+            const isEditMode = formTarea.editMode.value === 'true';
+            const taskId = formTarea.editTaskId.value;
+
+            // Determinar la URL y el método HTTP según el modo
+            let url = '/task/add';
+            let method = 'POST';
+            if (isEditMode && taskId) {
+                url = `/tasks/${taskId}/update`;
+                method = 'POST'; // Using POST for simplicity, could be PUT
+            }
+
+            // Enviar la tarea al backend (añadir o actualizar)
+            const response = await fetch(url, {
+                method: method,
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            });
+
+            if (response.ok) {
+                if (window.location.pathname === '/tasks') {
+                    window.location.href = '/tasks';
+                } else {
+                    window.location.href = '/home';
+                }
+            } else {
+                alert(isEditMode ? 'Error al actualizar la tarea' : 'Error al añadir la tarea');
+            }
+
+            modalTarea.hide();
+            formTarea.reset();
+            
+            // Reset edit mode
+            formTarea.editMode.value = 'false';
+            formTarea.editTaskId.value = '';
+            document.getElementById('modalTareaLabel').textContent = 'Añadir Nueva Tarea';
+            document.getElementById('submitBtn').textContent = 'Añadir';
         });
     }
 });
 
+async function deleteTaskIndex(event, id) {
+
+    try {
+        const res = await fetch(`/tasks/${id}/delete`, {
+            method: 'POST'
+        });
+
+        if (res.ok) {
+            window.location.href = '/home';
+        } else {
+            alert('Error al borrar la tarea');
+        }
+    } catch (error) {
+        console.error('Error en la solicitud:', error);
+        alert('Error al borrar la tarea');
+    }
+}
+
+// Function to edit a task - populates the modal with existing task data
+function editTask(id, title, description, dueDate, priority) {
+    // Set edit mode
+    document.getElementById('editMode').value = 'true';
+    document.getElementById('editTaskId').value = id;
+    
+    // Populate form fields
+    document.getElementById('tituloTarea').value = title;
+    document.getElementById('descripcionTarea').value = description;
+    document.getElementById('fechaTarea').value = dueDate;
+    document.getElementById('prioridadTarea').value = priority;
+    
+    // Update modal title and button
+    document.getElementById('modalTareaLabel').textContent = 'Editar Tarea';
+    document.getElementById('submitBtn').textContent = 'Actualizar';
+    
+    // Show modal
+    const modal = new bootstrap.Modal(document.getElementById('modalTarea'));
+    modal.show();
+}
+
 async function processTaskData(event) {
     event.preventDefault();
     const taskForm = document.getElementById('taskForm');
-    // Añadir aquí el código para validar los campos
+
+
     const formData = new FormData(event.target);
     const response = await fetch('/task/add', {
         method: 'POST',
@@ -37,7 +161,6 @@ async function processTaskData(event) {
         window.location.href = '/home';
     }
 }
-
 
 async function checkUser(event) {
     event.preventDefault();
@@ -133,7 +256,20 @@ async function newUser(event) {
     const username = document.getElementById("usernameR").value;
     const email = document.getElementById("emailR").value;
     const password = document.getElementById("passwordR2").value;
+    const fotoInput = document.getElementById("formFileSm");
 
+    let profilePhotoData = null;
+
+    // If a file is selected, convert it to base64
+    if (fotoInput.files && fotoInput.files[0]) {
+        try {
+            profilePhotoData = await fileToBase64(fotoInput.files[0]);
+        } catch (error) {
+            console.error('Error converting file to base64:', error);
+            alert('Error processing the image file');
+            return;
+        }
+    }
 
     const response = await fetch("/newUser", {
         method: "POST",
@@ -143,7 +279,8 @@ async function newUser(event) {
         body: JSON.stringify({
             username: username,
             email: email,
-            password: password
+            password: password,
+            profile_photo: profilePhotoData || null
         })
     })
 
@@ -154,54 +291,6 @@ async function newUser(event) {
     }
 
 }
-
-document.addEventListener('DOMContentLoaded', () => {
-    const addTaskBtn = document.getElementById('add-task-btn');
-    const modalTareaElement = document.getElementById('modalTarea');
-
-    if (addTaskBtn && modalTareaElement) {
-        const modalTarea = new bootstrap.Modal(modalTareaElement);
-
-        // Abrir modal al hacer clic en "Añadir tarea"
-        addTaskBtn.addEventListener('click', () => {
-            modalTarea.show();
-        });
-
-        // Manejar envío del formulario
-        const formTarea = document.getElementById('formTarea');
-        formTarea.addEventListener('submit', async (e) => {
-            e.preventDefault();
-
-            // Obtener los datos del formulario con los nombres que espera el backend
-            const data = {
-                title: formTarea.tituloTarea.value.trim(),
-                description: formTarea.descripcionTarea.value.trim(),
-                dueDate: formTarea.fechaTarea.value,
-                priority: formTarea.prioridadTarea.value
-            };
-
-            // Enviar la tarea al backend
-            const response = await fetch('/task/add', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(data)
-            });
-            if (response.ok) {
-                if (window.location.pathname === '/tasks') {
-                    window.location.href = '/tasks';
-                } else {
-                    window.location.href = '/home';
-                }
-            } else {
-                alert('Error al añadir la tarea');
-            }
-            modalTarea.hide();
-            formTarea.reset();
-        });
-    }
-});
 
 // Asignar color de prioridad y completado en dashboard (index)
 document.addEventListener('DOMContentLoaded', function () {

@@ -15,15 +15,47 @@ const upload = multer({ dest: UPLOADS_FOLDER });
 let currentUser = null;
 
 router.get("/", (req, res) => {
-    res.render("login", { tasks: toDoService.getTasks() });
+    res.render("login", { tasks: toDoService.getAllTasks(currentUser) });
 });
 
 router.get("/newTask", (req, res) => {
     res.render("newTask");
 });
 
+router.get("/calendar", (req, res) => {
+    if (!currentUser) {
+        return res.redirect("/");
+    }
+    const tasks = toDoService.getAllTasks(currentUser);
+
+    const calendarTasks = tasks.map(task => {
+        let color = '#0d6efd'; // Default color (Bootstrap primary)
+        const priority = (task.priority || '').toLowerCase();
+
+        if (priority === 'high' || priority === 'alta') {
+            color = '#dc3545'; // Bootstrap danger color for high priority
+        } else if (priority === 'medium' || priority === 'media') {
+            color = '#ffc107'; // Bootstrap warning color for medium priority
+        } else if (priority === 'low' || priority === 'baja') {
+            color = '#198754'; // Bootstrap success color for low priority
+        }
+
+        return {
+            title: task.title,
+            start: task.dueDate,
+            description: task.description,
+            color: color // Add the color property here
+        };
+    });
+
+    res.render("calendar", { tasks: JSON.stringify(calendarTasks) });
+});
+
 router.get("/home", (req, res) => {
-    const allTasks = toDoService.getTasks();
+    if (!currentUser) {
+        return res.redirect("/");
+    }
+    const allTasks = toDoService.getAllTasks(currentUser);
     // Ordenar por fecha de creación descendente
     const recientes = allTasks
         .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
@@ -51,7 +83,7 @@ router.get("/home", (req, res) => {
 })
 
 router.get("/tasks", (req, res) => {
-    res.render("tasks", { tasks: toDoService.getTasks(), user: currentUser || { name: "Invitado" } });
+    res.render("tasks", { tasks: toDoService.getAllTasks(), user: currentUser || { name: "Invitado" } });
 })
 
 router.post("/task/add", (req, res) => {
@@ -64,7 +96,7 @@ router.post("/task/add", (req, res) => {
         completed: false,
         createdAt: new Date()
     }
-    toDoService.addTask(task);
+    toDoService.addUserTask(task, currentUser);
     // Si el formulario envía un campo redirectTo lo usamos, si no comprobamos el referer
     const redirectTo = req.body.redirectTo;
     if (redirectTo) {
@@ -110,9 +142,26 @@ router.post('/tasks/:id/toggleComplete', (req, res) => {
 }); */
 
 router.post("/tasks/:id/delete", (req, res) => {
-    let id = req.params.id;
-    toDoService.deleteTask(id);
-    res.redirect("/home");
+    let id = Number(req.params.index);
+    let result = toDoService.deleteUserTask(id, currentUser);
+    res.json(result);
+});
+
+router.post("/tasks/:id/update", (req, res) => {
+    let id = Number(req.params.id);
+    let updatedTask = {
+        title: req.body.title,
+        description: req.body.description,
+        dueDate: req.body.dueDate,
+        priority: req.body.priority
+    };
+    let result = toDoService.updateUserTask(id, updatedTask, currentUser);
+    res.json(result);
+});
+
+router.post("/currentUser/null", (req, res) => {
+    currentUser = null;
+    res.json(true);
 });
 
 router.post("/checkUser", (req, res) => {
@@ -156,7 +205,7 @@ router.post("/newUser", (req, res) => {
         email: userAux.email,
         password: userAux.password,
         badge: [],
-        profile_photo: "default.png",
+        profile_photo: userAux.profile_photo || "https://cdn-icons-png.flaticon.com/512/149/149071.png",
         tasks: []
     }
 

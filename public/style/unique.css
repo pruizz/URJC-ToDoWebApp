@@ -1,3 +1,6 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600&display=swap');
+
 .bottom-cards .card:has(.no-tasks-message),
 .bottom-cards .card:has(.empty) {
     min-height: 100px !important;
@@ -701,8 +704,6 @@ body {
         flex: 1;
     }
 
-    /* Importación de una fuente similar a la de la imagen */
-    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap');
 
     /* Estilos generales */
     body {
@@ -1126,4 +1127,57 @@ body {
 .task-card.completed .task-description {
     text-decoration: line-through;
     color: #868E96;
+}
+
+/* In public/style/unique.css */
+
+#calendar {
+  /* Remove all borders for a cleaner look */
+  --fc-border-color: #e0e0e0; /* A very light gray for a thin border effect */
+
+  /* A very light gray for the background of days */
+  --fc-daygrid-day-bg-color: #fdfdfd;
+
+  /* Subtle highlight for the current day */
+  --fc-today-bg-color: #f0f4ff; /* A very light, almost unnoticeable blue */
+
+  /* Header Toolbar Customization */
+  --fc-button-text-color: #555;
+  --fc-button-bg-color: transparent;
+  --fc-button-border-color: transparent;
+  --fc-button-hover-bg-color: #f0f0f0;
+  --fc-button-active-bg-color: #e8e8e8;
+}
+
+/* Title styling (e.g., "November 2025") */
+.fc-toolbar-title {
+  font-family: 'Quicksand', sans-serif;
+  font-size: 1.5rem; /* Slightly smaller for a minimal feel */
+  font-weight: 600;
+  color: #333;
+}
+
+/* Day header styling (Sun, Mon, etc.) */
+.fc-col-header-cell-cushion {
+  font-family: 'Quicksand', sans-serif;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: #888;
+  text-decoration: none;
+  text-transform: uppercase; /* A common minimal touch */
+}
+
+/* Event styling */
+.fc-event {
+  border: none !important; /* Remove default borders on events */
+  font-size: 0.8rem;
+  padding: 4px 6px;
+  border-radius: 4px;
+}
+
+/* Day number styling */
+.fc-daygrid-day-number {
+  color: #999;
+  padding: 8px;
+  text-decoration: none; /* Removes the underline */
 }
