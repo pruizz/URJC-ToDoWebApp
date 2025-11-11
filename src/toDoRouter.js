@@ -201,6 +201,10 @@ router.post("/tasks/:id/delete", (req, res) => {
     if (!currentUser) return res.json(false);
     let id = Number(req.params.id);
     let result = toDoService.deleteUserTask(id, currentUser);
+    if (result.completed){
+        currentUser.tasksCompleted--;
+    }
+    toDoService.saveDataToDisk();
     res.json(!!result);
 });
 
