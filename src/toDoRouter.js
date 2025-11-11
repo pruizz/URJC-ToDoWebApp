@@ -75,10 +75,44 @@ router.get("/home", (req, res) => {
                 priority: normalized
             };
         });
+    
+    // Preparar datos del calendario: agrupar por fecha y mantener la prioridad más alta
+    const taskDateMap = {};
+    allTasks.forEach(task => {
+        if (!task.dueDate) {
+            return; // Saltar tareas sin fecha
+        }
+
+        const priorityValue = (task.priority || '').toLowerCase();
+        let level = 3; // baja por defecto
+        let normalizedPriority = 'baja';
+
+        if (priorityValue === 'high' || priorityValue === 'alta' || priorityValue === 'alta 🔴') {
+            level = 1;
+            normalizedPriority = 'alta';
+        } else if (priorityValue === 'medium' || priorityValue === 'media' || priorityValue === 'media 🟡') {
+            level = 2;
+            normalizedPriority = 'media';
+        }
+
+        const existing = taskDateMap[task.dueDate];
+        if (!existing || level < existing.level) {
+            taskDateMap[task.dueDate] = { 
+                date: task.dueDate, 
+                priority: normalizedPriority, 
+                level 
+            };
+        }
+    });
+
+    const taskDatesWithPriority = Object.values(taskDateMap);
+    const taskDatesJson = JSON.stringify(taskDatesWithPriority);
+
     res.render("index", {
         tasks: allTasks,
         tareasRecientes: recientes,
-        user: currentUser || { name: "Invitado" }
+        user: currentUser || { name: "Invitado" },
+        taskDatesJson: taskDatesJson
     });
 })
 
