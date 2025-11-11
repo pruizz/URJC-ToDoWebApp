@@ -75,7 +75,9 @@ router.get("/home", (req, res) => {
                 priority: normalized
             };
         });
+    let pendingTasks = allTasks.length - currentUser.tasksCompleted;
     res.render("index", {
+        pendingTasks: pendingTasks,
         tasks: allTasks,
         tareasRecientes: recientes,
         user: currentUser || { name: "Invitado" }
@@ -125,7 +127,16 @@ router.post('/tasks/:id/toggleComplete', (req, res) => {
     const id = Number(req.params.id);
     const task = currentUser.tasks.find(t => t.id === id);
     if (task) {
+        const wasCompleted = task.completed;
         task.completed = !task.completed;
+        if (currentUser.tasksCompleted === undefined || currentUser.tasksCompleted === null) {
+            currentUser.tasksCompleted = 0;
+        }
+        if (!wasCompleted && task.completed) {
+            currentUser.tasksCompleted++;
+        } else if (wasCompleted && !task.completed) {
+            currentUser.tasksCompleted--;
+        }
         // persist
         toDoService.saveDataToDisk();
     }
