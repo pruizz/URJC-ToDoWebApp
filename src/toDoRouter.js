@@ -45,10 +45,11 @@ router.get("/calendar", (req, res) => {
             start: task.dueDate,
             description: task.description,
             color: color // Add the color property here
+
         };
     });
 
-    res.render("calendar", { tasks: JSON.stringify(calendarTasks) });
+    res.render("calendar", { tasks: JSON.stringify(calendarTasks),user: currentUser || { name: "Invitado" } });
 });
 
 router.get("/home", (req, res) => {
