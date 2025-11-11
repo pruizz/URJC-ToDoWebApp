@@ -7,6 +7,7 @@
     height: auto !important;
     display: block;
 }
+
 .no-tasks-message,
 .card.proximos-vencimientos .empty {
     margin-top: 1.5em;
@@ -21,6 +22,7 @@
     align-items: center;
     width: 100%;
 }
+
 .aside-header h1 {
     margin: 0;
     font-size: 2rem;
@@ -28,6 +30,7 @@
     color: #3CA6A6;
     text-align: center;
 }
+
 /* ===== MINI CARD TAREAS RECIENTES DASHBOARD ===== */
 .mini-task-card {
     background: #f9fafb;
@@ -501,7 +504,7 @@ body {
 .user-box {
     background-color: #334155;
     border-radius: 10px;
-    padding: 1rem;
+    padding: 0.75rem;
     display: flex;
     align-items: center;
     gap: 1.2rem;
@@ -518,13 +521,14 @@ body {
 }
 
 .user-box .user-name {
-    font-size: 0.95em;
+    font-size: 1.1rem;
     font-weight: 500;
     color: #e2e8f0;
     flex: 1;
     display: flex;
     align-items: center;
     justify-content: center;
+    margin-right: 1.5rem;
     min-width: 0;
     text-align: center;
     white-space: normal;
@@ -1132,52 +1136,58 @@ body {
 /* In public/style/unique.css */
 
 #calendar {
-  /* Remove all borders for a cleaner look */
-  --fc-border-color: #e0e0e0; /* A very light gray for a thin border effect */
+    /* Remove all borders for a cleaner look */
+    --fc-border-color: #e0e0e0;
+    /* A very light gray for a thin border effect */
 
-  /* A very light gray for the background of days */
-  --fc-daygrid-day-bg-color: #fdfdfd;
+    /* A very light gray for the background of days */
+    --fc-daygrid-day-bg-color: #fdfdfd;
 
-  /* Subtle highlight for the current day */
-  --fc-today-bg-color: #f0f4ff; /* A very light, almost unnoticeable blue */
+    /* Subtle highlight for the current day */
+    --fc-today-bg-color: #f0f4ff;
+    /* A very light, almost unnoticeable blue */
 
-  /* Header Toolbar Customization */
-  --fc-button-text-color: #555;
-  --fc-button-bg-color: transparent;
-  --fc-button-border-color: transparent;
-  --fc-button-hover-bg-color: #f0f0f0;
-  --fc-button-active-bg-color: #e8e8e8;
+    /* Header Toolbar Customization */
+    --fc-button-text-color: #555;
+    --fc-button-bg-color: transparent;
+    --fc-button-border-color: transparent;
+    --fc-button-hover-bg-color: #f0f0f0;
+    --fc-button-active-bg-color: #e8e8e8;
 }
 
 /* Title styling (e.g., "November 2025") */
 .fc-toolbar-title {
-  font-family: 'Quicksand', sans-serif;
-  font-size: 1.5rem; /* Slightly smaller for a minimal feel */
-  font-weight: 600;
-  color: #333;
+    font-family: 'Quicksand', sans-serif;
+    font-size: 1.5rem;
+    /* Slightly smaller for a minimal feel */
+    font-weight: 600;
+    color: #333;
 }
 
 /* Day header styling (Sun, Mon, etc.) */
 .fc-col-header-cell-cushion {
-  font-family: 'Quicksand', sans-serif;
-  font-size: 0.85rem;
-  font-weight: 500;
-  color: #888;
-  text-decoration: none;
-  text-transform: uppercase; /* A common minimal touch */
+    font-family: 'Quicksand', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: #888;
+    text-decoration: none;
+    text-transform: uppercase;
+    /* A common minimal touch */
 }
 
 /* Event styling */
 .fc-event {
-  border: none !important; /* Remove default borders on events */
-  font-size: 0.8rem;
-  padding: 4px 6px;
-  border-radius: 4px;
+    border: none !important;
+    /* Remove default borders on events */
+    font-size: 0.8rem;
+    padding: 4px 6px;
+    border-radius: 4px;
 }
 
 /* Day number styling */
 .fc-daygrid-day-number {
-  color: #999;
-  padding: 8px;
-  text-decoration: none; /* Removes the underline */
+    color: #999;
+    padding: 8px;
+    text-decoration: none;
+    /* Removes the underline */
 }
