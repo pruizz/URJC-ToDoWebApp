@@ -45,10 +45,11 @@ router.get("/calendar", (req, res) => {
             start: task.dueDate,
             description: task.description,
             color: color // Add the color property here
+
         };
     });
 
-    res.render("calendar", { tasks: JSON.stringify(calendarTasks) });
+    res.render("calendar", { tasks: JSON.stringify(calendarTasks),user: currentUser || { name: "Invitado" } });
 });
 
 router.get("/home", (req, res) => {
@@ -75,10 +76,46 @@ router.get("/home", (req, res) => {
                 priority: normalized
             };
         });
+
+    // Preparar datos del calendario: agrupar por fecha y mantener la prioridad más alta
+    const taskDateMap = {};
+    allTasks.forEach(task => {
+        if (!task.dueDate) {
+            return; // Saltar tareas sin fecha
+        }
+
+        const priorityValue = (task.priority || '').toLowerCase();
+        let level = 3; // baja por defecto
+        let normalizedPriority = 'baja';
+
+        if (priorityValue === 'high' || priorityValue === 'alta' || priorityValue === 'alta 🔴') {
+            level = 1;
+            normalizedPriority = 'alta';
+        } else if (priorityValue === 'medium' || priorityValue === 'media' || priorityValue === 'media 🟡') {
+            level = 2;
+            normalizedPriority = 'media';
+        }
+
+        const existing = taskDateMap[task.dueDate];
+        if (!existing || level < existing.level) {
+            taskDateMap[task.dueDate] = {
+                date: task.dueDate,
+                priority: normalizedPriority,
+                level
+            };
+        }
+    });
+
+    const taskDatesWithPriority = Object.values(taskDateMap);
+    const taskDatesJson = JSON.stringify(taskDatesWithPriority);
+
+    let pendingTasks = allTasks.length - currentUser.tasksCompleted;
     res.render("index", {
+        pendingTasks: pendingTasks,
         tasks: allTasks,
         tareasRecientes: recientes,
-        user: currentUser || { name: "Invitado" }
+        user: currentUser || { name: "Invitado" },
+        taskDatesJson: taskDatesJson
     });
 })
 
@@ -125,7 +162,16 @@ router.post('/tasks/:id/toggleComplete', (req, res) => {
     const id = Number(req.params.id);
     const task = currentUser.tasks.find(t => t.id === id);
     if (task) {
+        const wasCompleted = task.completed;
         task.completed = !task.completed;
+        if (currentUser.tasksCompleted === undefined || currentUser.tasksCompleted === null) {
+            currentUser.tasksCompleted = 0;
+        }
+        if (!wasCompleted && task.completed) {
+            currentUser.tasksCompleted++;
+        } else if (wasCompleted && !task.completed) {
+            currentUser.tasksCompleted--;
+        }
         // persist
         toDoService.saveDataToDisk();
     }
@@ -156,6 +202,10 @@ router.post("/tasks/:id/delete", (req, res) => {
     if (!currentUser) return res.json(false);
     let id = Number(req.params.id);
     let result = toDoService.deleteUserTask(id, currentUser);
+    if (result.completed){
+        currentUser.tasksCompleted--;
+    }
+    toDoService.saveDataToDisk();
     res.json(!!result);
 });
 

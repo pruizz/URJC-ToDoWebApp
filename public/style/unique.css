@@ -1175,14 +1175,129 @@ body {
     /* Removes the underline */
 }
 
-
-.btn-primary {
-    background-color: #026773 !important;
-    border: #026773 !important;
-    transition: background-color 0.3s ease, border-color 0.2s ease !important;
+.bottom-card.proximos-vencimientos {
+    background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+    color: white;
+    padding: 1.5rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
-.btn-primary:hover {
-    background-color: #024959 !important;
-    border-color: #024959 !important;
+.bottom-card.proximos-vencimientos h2 {
+    color: white;
+    margin-bottom: 1rem;
+    font-size: 1.2rem;
+    font-weight: 600;
+}
+
+/* Container del mini calendario */
+#mini-deadline-calendar {
+    width: 100%;
+    max-width: 320px;
+    margin: 0 auto;
+}
+
+/* Personalización de Flatpickr para el tema oscuro */
+#mini-deadline-calendar .flatpickr-calendar {
+    background: transparent;
+    box-shadow: none;
+    border: none;
+}
+
+#mini-deadline-calendar .flatpickr-months {
+    background: transparent;
+}
+
+#mini-deadline-calendar .flatpickr-month {
+    color: white;
+}
+
+#mini-deadline-calendar .flatpickr-current-month .flatpickr-monthDropdown-months {
+    background: #334155;
+    color: white;
+}
+
+#mini-deadline-calendar .flatpickr-current-month input.cur-year {
+    color: white;
+    background: transparent;
+}
+
+#mini-deadline-calendar .flatpickr-weekdays {
+    background: transparent;
+}
+
+#mini-deadline-calendar .flatpickr-weekday {
+    color: #94a3b8;
+    font-weight: 600;
+}
+
+#mini-deadline-calendar .flatpickr-days {
+    background: transparent;
+}
+
+#mini-deadline-calendar .flatpickr-day {
+    color: #e2e8f0;
+    border: none;
+    background: transparent;
+}
+
+#mini-deadline-calendar .flatpickr-day:hover {
+    background: #475569;
+    border-color: #475569;
+}
+
+#mini-deadline-calendar .flatpickr-day.today {
+    background: #3b82f6;
+    border-color: #3b82f6;
+    color: white;
+}
+
+#mini-deadline-calendar .flatpickr-day.selected {
+    background: #22c55e;
+    border-color: #22c55e;
+}
+
+#mini-deadline-calendar .flatpickr-day.prevMonthDay,
+#mini-deadline-calendar .flatpickr-day.nextMonthDay {
+    color: #64748b;
+}
+
+/* Botones de navegación */
+#mini-deadline-calendar .flatpickr-prev-month,
+#mini-deadline-calendar .flatpickr-next-month {
+    color: white;
+}
+
+#mini-deadline-calendar .flatpickr-prev-month:hover svg,
+#mini-deadline-calendar .flatpickr-next-month:hover svg {
+    fill: #22c55e;
+}
+
+/* Estilos para los puntos de eventos */
+.event-dot {
+    position: absolute;
+    bottom: 4px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    display: block;
+    z-index: 10;
+}
+
+/* Colores según prioridad */
+.event-dot-alta,
+.event-dot-high {
+    background-color: #ef4444; /* Rojo */
+}
+
+.event-dot-media,
+.event-dot-medium {
+    background-color: #f59e0b; /* Ámbar */
+}
+
+.event-dot-baja,
+.event-dot-low {
+    background-color: #22c55e; /* Verde */
 }

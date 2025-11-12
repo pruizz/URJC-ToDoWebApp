@@ -13,6 +13,52 @@ function fileToBase64(file) {
 document.addEventListener('DOMContentLoaded', () => {
 
 
+    const miniCalendarEl = document.getElementById('mini-deadline-calendar');
+    if (miniCalendarEl && typeof flatpickr !== 'undefined') {
+        try {
+            // Obtener los datos de las tareas desde el atributo data
+            const taskDatesRaw = miniCalendarEl.getAttribute('data-task-dates');
+            console.debug('Task dates raw:', taskDatesRaw);
+            
+            let taskDates = [];
+            if (taskDatesRaw) {
+                taskDates = JSON.parse(taskDatesRaw);
+                console.debug('Task dates parsed:', taskDates);
+            }
+
+            // Crear un mapa de fechas para búsqueda rápida
+            const dateMap = {};
+            taskDates.forEach(item => {
+                dateMap[item.date] = item.priority; // 'alta', 'media', 'baja'
+            });
+            console.debug('Date map:', dateMap);
+
+            // Inicializar Flatpickr
+            flatpickr(miniCalendarEl, {
+                inline: true,
+                locale: 'es',
+                defaultDate: new Date(),
+                onDayCreate: function(dObj, dStr, fp, dayElem) {
+                    // Formatear la fecha en formato Y-m-d (2025-11-19)
+                    const dateStr = fp.formatDate(dayElem.dateObj, 'Y-m-d');
+                    
+                    // Verificar si hay una tarea en esta fecha
+                    if (dateMap[dateStr]) {
+                        const priority = dateMap[dateStr];
+                        // Crear el punto de color
+                        const dot = document.createElement('span');
+                        dot.className = `event-dot event-dot-${priority}`;
+                        dayElem.appendChild(dot);
+                        console.debug(`Added dot for ${dateStr} with priority ${priority}`);
+                    }
+                }
+            });
+            console.debug('Flatpickr initialized successfully');
+        } catch (error) {
+            console.error('Error initializing Flatpickr:', error);
+        }
+    }
+
     const addTaskBtn = document.getElementById('add-task-btn');
     const modalTareaElement = document.getElementById('modalTarea');
 

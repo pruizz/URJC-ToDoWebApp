@@ -66,6 +66,7 @@ export function getOneTask(i, user) {
 }
 
 export function addUser(user) {
+    user.tasksCompleted = 0;
     users.set(user.username, user);
     saveDataToDisk();
     return user;
