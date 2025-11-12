@@ -1289,15 +1289,29 @@ body {
 /* Colores según prioridad */
 .event-dot-alta,
 .event-dot-high {
-    background-color: #ef4444; /* Rojo */
+    background-color: #ef4444;
+    /* Rojo */
 }
 
 .event-dot-media,
 .event-dot-medium {
-    background-color: #f59e0b; /* Ámbar */
+    background-color: #f59e0b;
+    /* Ámbar */
 }
 
 .event-dot-baja,
 .event-dot-low {
-    background-color: #22c55e; /* Verde */
+    background-color: #22c55e;
+    /* Verde */
+}
+
+.btn-primary {
+    background-color: #026773 !important;
+    border: #026773 !important;
+    transition: background-color 0.3s ease, border-color 0.2s ease !important;
+}
+
+.btn-primary:hover {
+    background-color: #024959 !important;
+    border-color: #024959 !important;
 }
