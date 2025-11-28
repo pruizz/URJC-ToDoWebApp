@@ -1,11 +1,10 @@
-import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
+import usersObj from './users.json' with { type: "json" };
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const dataPath = getUsersPath();
 
 let users = loadDataFromDisk();
 
@@ -107,9 +106,7 @@ export function checkUserPass(username, password) {
 
 
 export function saveDataToDisk() {
-    const usersObj = Object.fromEntries(users); // convierte el Map en objeto
-    const jsonData = JSON.stringify(usersObj, null, 4);
-    fs.writeFileSync(getUsersPath(), jsonData, "utf8");
+    // TODO: Save to a Mongo DB
 }
 
 function getUsersPath() {
@@ -124,8 +121,7 @@ function getUsersPath() {
 
 
 export function loadDataFromDisk() {
-    let data = fs.readFileSync(getUsersPath(), 'utf-8');
-    let usersObj = JSON.parse(data);
+    
     return new Map(Object.entries(usersObj));
 }
 
