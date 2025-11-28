@@ -1,15 +1,9 @@
 import express from "express";
-import multer from "multer";
-import fs from "node:fs/promises";
 
 import * as toDoService from "./toDoService.js";
-import { create } from "node:domain";
 
-const UPLOADS_FOLDER = "uploads";
-const DEMO_FOLDER = "demo";
 
 const router = express.Router();
-const upload = multer({ dest: UPLOADS_FOLDER });
 
 
 let currentUser = null;
