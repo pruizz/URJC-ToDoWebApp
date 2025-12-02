@@ -1,7 +1,5 @@
 import express from "express";
-
 import * as toDoService from "./toDoService.js";
-import { testMongo } from "./mongo.js";
 
 
 const router = express.Router();
@@ -279,8 +277,8 @@ router.get("/register", (req, res) => {
 
 
 router.get("/debug-mongo", async (req, res) => {
-    const users = await testMongo();
-    res.json({ users });
+    // const users = await testMongo();
+    // res.json({ users });
 });
 
 
