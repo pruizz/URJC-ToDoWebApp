@@ -4,6 +4,7 @@ import fs from "node:fs/promises";
 
 import * as toDoService from "./toDoService.js";
 import { create } from "node:domain";
+import { testMongo } from "./mongo.js";
 
 const UPLOADS_FOLDER = "uploads";
 const DEMO_FOLDER = "demo";
@@ -160,6 +161,10 @@ router.get("/register", (req, res) => {
 });
 
 
+router.get("/debug-mongo", async (req, res) => {
+    const users = await testMongo();
+    res.json({ users });
+});
 
 
 

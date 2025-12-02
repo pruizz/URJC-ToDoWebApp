@@ -5,7 +5,7 @@ import {fileURLToPath} from "url";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const dataPath = getUsersPath();
+// const dataPath = getUsersPath();
 
 let users = loadDataFromDisk();
 
@@ -103,9 +103,9 @@ function getUsersPath() {
 
 
 export function loadDataFromDisk() {
-    let data = fs.readFileSync(getUsersPath(), 'utf-8');
-    let usersObj = JSON.parse(data);
-    return new Map(Object.entries(usersObj));
+    // let data = fs.readFileSync(getUsersPath(), 'utf-8');
+    // let usersObj = JSON.parse(data);
+    // return new Map(Object.entries(usersObj));
 }
 
 
