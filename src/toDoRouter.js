@@ -1,6 +1,6 @@
 import express from "express";
 import * as toDoService from "./toDoService.js";
-
+import * as dataBaseService from "./dataBaseService.js";
 
 const router = express.Router();
 
@@ -44,6 +44,10 @@ router.get("/calendar", (req, res) => {
 
     res.render("calendar", { tasks: JSON.stringify(calendarTasks),user: currentUser || { name: "Invitado" } });
 });
+
+router.get("/debug", async (req, res) => {
+    res.json(await dataBaseService.getUser("admin"));
+})
 
 router.get("/home", (req, res) => {
     if (!currentUser) {

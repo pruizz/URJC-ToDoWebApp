@@ -42,5 +42,17 @@ export async function upsertOne(collectionName, id, data) {
     const db = await connect();
     const collection = db.collection(collectionName);
     const result = await collection.updateOne({ _id: id }, { $set: data }, { upsert: true });
+    console.log(result);
     return result;
 }
+
+export async function getOne(collectionName, id){
+    const db = await connect();
+    const collection = db.collection(collectionName);
+    const result = await collection.findOne({ _id: id });
+    console.log(result);
+    return result;
+}
+
+
+
