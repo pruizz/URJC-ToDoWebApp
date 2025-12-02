@@ -1,6 +1,6 @@
-import fs from "fs";
 import path from "path";
-import {fileURLToPath} from "url";
+import { fileURLToPath } from "url";
+import usersObj from './users.json' with { type: "json" };
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -33,11 +33,31 @@ export function deleteUserTask(id, user) {
     return task;
 }
 
+export function updateUserTask(id, updatedTask, user) {
+    let taskIndex = -1;
+    for (let j = 0; j < user.tasks.length; j++) {
+        if (user.tasks[j].id === id) {
+            taskIndex = j;
+            break;
+        }
+    }
+    if (taskIndex !== -1) {
+        // Preserve the original id, createdAt, and completed status
+        updatedTask.id = user.tasks[taskIndex].id;
+        updatedTask.createdAt = user.tasks[taskIndex].createdAt;
+        updatedTask.completed = user.tasks[taskIndex].completed;
+        user.tasks[taskIndex] = updatedTask;
+        saveDataToDisk();
+        return updatedTask;
+    }
+    return null;
+}
+
 export function getAllTasks(user) {
     if (user) {
         return user.tasks;
-    }else{
-        return null;
+    } else {
+        return [];
     }
 }
 
@@ -45,7 +65,8 @@ export function getOneTask(i, user) {
     return user.tasks[i];
 }
 
-export function addUser(user){
+export function addUser(user) {
+    user.tasksCompleted = 0;
     users.set(user.username, user);
     saveDataToDisk();
     return user;
@@ -55,7 +76,7 @@ export function getUser(username) {
     return users.get(username);
 }
 
-export function deleteUser(username){
+export function deleteUser(username) {
     users.delete(username);
     saveDataToDisk();
 }
@@ -77,18 +98,16 @@ export function checkEmailAvailable(email) {
 
 export function checkUserPass(username, password) {
     let user = getUser(username);
-    if (user && user.password === password){
+    if (user && user.password === password) {
         return user
-    }else{
+    } else {
         return null
     }
 }
 
 
 export function saveDataToDisk() {
-    const usersObj = Object.fromEntries(users); // convierte el Map en objeto
-    const jsonData = JSON.stringify(usersObj, null, 4);
-    fs.writeFileSync(getUsersPath(), jsonData, "utf8");
+    // TODO: Save to a Mongo DB
 }
 
 function getUsersPath() {
