@@ -51,7 +51,7 @@ export async function updateTaskForUser(username, updatedTask) {
     }
 
     // Update the task details
-    Object.assign(user.tasks[taskIndex], updatedTask);
+    user.tasks[taskIndex] = { ...user.tasks[taskIndex], ...updatedTask };
     // Update the user document in the database
     return await createOrUpdateOne(COLLECTION_USERS, username, user);
 }

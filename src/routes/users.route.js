@@ -1,5 +1,6 @@
 import express from "express";
 import * as userService from "../services/user.service.js";
+import { createUser } from "../repos/user.repo.js";
 
 export const usersRouter = express.Router();
 
@@ -33,15 +34,8 @@ usersRouter.post("/api/duplicateEmail", async (req, res) => {
 });
 
 usersRouter.post("/api/newUser", async (req, res) => {
-    let userAux = req.body;
-    let user = {
-        username: userAux.username,
-        email: userAux.email,
-        password: userAux.password,
-        badge: [],
-        profile_photo: userAux.profile_photo || "https://cdn-icons-png.flaticon.com/512/149/149071.png",
-        tasks: []
-    };
-    let result = await userService.createUser(user);
+    const { username, email, password, profile_photo } = req.body;
+    const newUser = createUser(username, email, password, profile_photo);
+    const result = await userService.createUser(newUser);
     res.json(result);
 });

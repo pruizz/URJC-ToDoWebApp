@@ -38,19 +38,17 @@ export async function getAllFromCollection(collectionName) {
     return results;
 }
 
-export async function createOrUpdateOne(collectionName, id, data) {
+export async function createOrUpdateOne(collectionName, username, data) {
     const db = await connect();
     const collection = db.collection(collectionName);
-    const result = await collection.updateOne({ _id: id }, { $set: data }, { upsert: true });
-    console.log(result);
-    return await getOne(collectionName, id);
+    const result = await collection.updateOne({ username: username }, { $set: data }, { upsert: true });
+    return await getOne(collectionName, username);
 }
 
-export async function getOne(collectionName, id){
+export async function getOne(collectionName, username){
     const db = await connect();
     const collection = db.collection(collectionName);
-    const result = await collection.findOne({ _id: id });
-    console.log(result);
+    const result = await collection.findOne({ username: username });
     return result;
 }
 

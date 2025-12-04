@@ -38,4 +38,49 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (el.classList.contains('completed')) el.classList.add('completed');
     });
+
+    // Filters and complete handling
+    // Centralized filter application function
+    function applyFilter(filter) {
+        document.querySelectorAll('.task-card').forEach(card => {
+            // reset display
+            card.style.display = '';
+
+            if (!filter || filter === 'all') return;
+
+            // determine completed state robustly (dataset or class)
+            const isCompleted = (card.dataset.completed === 'true') || card.classList.contains('completed');
+
+            if (filter === 'pending' && isCompleted) {
+                card.style.display = 'none';
+                return;
+            }
+            if (filter === 'completed' && !isCompleted) {
+                card.style.display = 'none';
+                return;
+            }
+            if (filter.startsWith('priority-') && !card.classList.contains(filter)) {
+                card.style.display = 'none';
+                return;
+            }
+        });
+    }
+
+    // Filter buttons
+    const filterButtons = document.querySelectorAll('.btn-filter');
+    filterButtons.forEach(btn => btn.addEventListener('click', function () {
+        filterButtons.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        const filter = btn.dataset.filter;
+        applyFilter(filter);
+    }));
+
+    document.querySelectorAll('.task-card').forEach(function (el) {
+        var p = (el.dataset.priority || '').toLowerCase();
+        if (p === 'high') el.classList.add('priority-high');
+        else if (p === 'medium') el.classList.add('priority-medium');
+        else if (p === 'low') el.classList.add('priority-low');
+
+        if (el.dataset.completed === 'true') el.classList.add('completed');
+    });
 });

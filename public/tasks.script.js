@@ -55,22 +55,45 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     }
+
+    document.querySelectorAll('.btn-complete').forEach(btn => {
+        btn.addEventListener('click', async function () {
+            const id = btn.dataset.id;
+            try {
+                const res = await fetch(`/api/tasks/${id}/toggleComplete`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: new URLSearchParams({ redirectTo: '/home' })
+                });
+
+                if (res.ok) {
+                    const card = document.getElementById(`task-${id}`);
+                    if (card) {
+                        card.classList.toggle('completed');
+                        card.dataset.completed = card.classList.contains('completed') ? 'true' : 'false';
+                    }
+                } else {
+                    alert('Error al marcar la tarea');
+                }
+            } catch (err) {
+                console.error(err);
+                alert('Error de red al actualizar la tarea');
+            }
+        });
+    });
 });
 
-async function deleteTaskIndex(id) {
-    try {
-        const res = await fetch(`/api/tasks/${id}/delete`, {
-            method: 'POST'
-        });
+function deleteTask(event, id) {
+    event.preventDefault();
+    fetch(`/api/tasks/${id}`, {
+        method: 'DELETE'
+    }).then(res => {
         if (res.ok) {
             window.location.reload();
         } else {
             alert('Error al borrar la tarea');
         }
-    } catch (error) {
-        console.error('Error en la solicitud:', error);
-        alert('Error al borrar la tarea');
-    }
+    });
 }
 
 function editTask(id, title, description, dueDate, priority) {
@@ -85,3 +108,4 @@ function editTask(id, title, description, dueDate, priority) {
     const modal = new bootstrap.Modal(document.getElementById('modalTarea'));
     modal.show();
 }
+

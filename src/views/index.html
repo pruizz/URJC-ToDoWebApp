@@ -77,7 +77,7 @@
                             </button>
 
                             <button type="button" class="btn-action btn-delete" title="Eliminar tarea"
-                                onclick="deleteTaskIndex(event, '{{id}}')">
+                                onclick="deleteTask(event, '{{id}}')">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
                                     fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
                                     stroke-linejoin="round">
@@ -165,34 +165,3 @@
 </body>
 
 </html>
-
-<script>
-    // Make the mini complete buttons on the dashboard behave like the ones in /tasks
-    document.addEventListener('DOMContentLoaded', function () {
-        document.querySelectorAll('.btn-complete').forEach(btn => {
-            btn.addEventListener('click', async function () {
-                const id = btn.dataset.id;
-                try {
-                    const res = await fetch(`/tasks/${id}/toggleComplete`, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                        body: new URLSearchParams({ redirectTo: '/home' })
-                    });
-
-                    if (res.ok) {
-                        const card = document.getElementById(`task-${id}`);
-                        if (card) {
-                            card.classList.toggle('completed');
-                            card.dataset.completed = card.classList.contains('completed') ? 'true' : 'false';
-                        }
-                    } else {
-                        alert('Error al marcar la tarea');
-                    }
-                } catch (err) {
-                    console.error(err);
-                    alert('Error de red al actualizar la tarea');
-                }
-            });
-        });
-    });
-</script>
