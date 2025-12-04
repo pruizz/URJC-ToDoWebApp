@@ -43,7 +43,7 @@ export async function createOrUpdateOne(collectionName, id, data) {
     const collection = db.collection(collectionName);
     const result = await collection.updateOne({ _id: id }, { $set: data }, { upsert: true });
     console.log(result);
-    return result;
+    return await getOne(collectionName, id);
 }
 
 export async function getOne(collectionName, id){
