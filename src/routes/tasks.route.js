@@ -17,11 +17,11 @@ tasksRouter.post("/api/task/add", async (req, res) => {
 
 tasksRouter.post('/api/tasks/:id/toggleComplete', async (req, res) => {
     const id = req.params.id;
-    const task = req.user.tasks.find(t => t.id === id);
+    const task = req.user.projects.find(project => project.id === req.user.activeProject).tasks.find(t => t.id === id);
     if (task) {
         try {
             const updatedUser = await toDoService.markTaskAs(req.user.username, id, !task.completed);
-            const updatedTask = updatedUser.tasks.find(t => t.id === id);
+            const updatedTask = updatedUser.projects.find(project => project.id === updatedUser.activeProject).tasks.find(t => t.id === id);
             res.json({ success: true, task: updatedTask });
         } catch (error) {
             res.status(500).json({ success: false, message: 'Failed to update task' });

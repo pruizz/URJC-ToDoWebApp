@@ -1,4 +1,5 @@
 import { createOrUpdateOne, getOne } from "../adapters/mongo.adapter.js";
+import { createProject as createProjectRepo } from "../repos/project.repo.js";
 import { getUser } from "./user.service.js";
 
 const COLLECTION_USERS = "users";
@@ -13,7 +14,11 @@ export async function addTaskToUser(username, task) {
     }
 
     // Add the new task to the user's tasks array
-    user.tasks.push(task);
+    const activeProject = user.projects.find(project => project.id === user.activeProject);
+    if (!activeProject) {
+        throw new Error("Active project not found");
+    }
+    activeProject.tasks.push(task);
 
     // Update the user document in the database
     return await createOrUpdateOne(COLLECTION_USERS, username, user);
@@ -29,7 +34,11 @@ export async function removeTaskFromUser(username, taskId) {
     }
 
     // Remove the task with the specified taskId from the user's tasks array
-    user.tasks = user.tasks.filter(task => task.id !== taskId);
+    const activeProject = user.projects.find(project => project.id === user.activeProject);
+    if (!activeProject) {
+        throw new Error("Active project not found");
+    }
+    activeProject.tasks = activeProject.tasks.filter(task => task.id !== taskId);
 
     // Update the user document in the database
     return await createOrUpdateOne(COLLECTION_USERS, username, user);
@@ -45,13 +54,17 @@ export async function updateTaskForUser(username, updatedTask) {
     }
 
     // Find the index of the task to be updated
-    const taskIndex = user.tasks.findIndex(task => task.id === updatedTask.id);
-    if (taskIndex === -1) {
-        throw new Error("Task not found");
+    const activeProject = user.projects.find(project => project.id === user.activeProject);
+    if (!activeProject) {
+        throw new Error("Active project not found");
     }
 
     // Update the task details
-    user.tasks[taskIndex] = { ...user.tasks[taskIndex], ...updatedTask };
+    const taskIndex = activeProject.tasks.findIndex(task => task.id === updatedTask.id);
+    if (taskIndex === -1) {
+        throw new Error("Task not found");
+    }
+    activeProject.tasks[taskIndex] = { ...activeProject.tasks[taskIndex], ...updatedTask };
     // Update the user document in the database
     return await createOrUpdateOne(COLLECTION_USERS, username, user);
 }
@@ -66,7 +79,11 @@ export async function markTaskAs(username, taskId, completed) {
     }
 
     // Find the task to be marked
-    const task = user.tasks.find(task => task.id === taskId);
+    const activeProject = user.projects.find(project => project.id === user.activeProject);
+    if (!activeProject) {
+        throw new Error("Active project not found");
+    }
+    const task = activeProject.tasks.find(task => task.id === taskId);
 
     if (!task) {
         throw new Error("Task not found");
@@ -80,5 +97,21 @@ export async function markTaskAs(username, taskId, completed) {
 }
 
 export function getAllTasks(user) {
-    return user.tasks;
+    const activeProject = user.projects.find(project => project.id === user.activeProject);
+    if (!activeProject) {
+        throw new Error("Active project not found");
+    }
+    return activeProject.tasks;
 }
+
+
+export async function createProject(username, title) {
+    const user = await getUser(username);
+    if (!user) {
+        throw new Error("User not found");
+    }  
+    const newProject = createProjectRepo(title);
+    user.projects.push(newProject);
+    
+    return await createOrUpdateOne(COLLECTION_USERS, username, user);
+}    

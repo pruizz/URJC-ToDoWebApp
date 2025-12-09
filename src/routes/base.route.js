@@ -64,6 +64,8 @@ baseRouter.get("/home", (req, res) => {
     const completedTasks = allTasks.filter(t => t.completed).length;
     const pendingTasks = allTasks.length - completedTasks;
 
+    console.log("*******************************", allTasks, req.user)
+
     res.render("index", {
         pendingTasks: pendingTasks,
         tasksCompleted: completedTasks,

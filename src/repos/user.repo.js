@@ -1,7 +1,7 @@
-import { generateUUID } from "../utils/uuid.utils.js";
+import { createProject } from "./project.repo.js";
 
 export function createUser(username, email, password, profile_photo = null) {
-    const defaultProjectID = generateUUID()
+    const newProject = createProject("Default Project");
     
     return {
         username: username,
@@ -9,11 +9,7 @@ export function createUser(username, email, password, profile_photo = null) {
         password: password,
         badge: [],
         profile_photo: profile_photo || "https://cdn-icons-png.flaticon.com/512/149/149071.png",
-        tasks: [{
-            id: defaultProjectID,
-            title: "Default Project",
-            tasks: []
-        }],
-        activeProject: defaultProjectID
+        projects: [newProject],
+        activeProject: newProject.id
     };
 }
