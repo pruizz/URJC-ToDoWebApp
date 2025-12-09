@@ -1,7 +1,9 @@
 
 import { MongoClient, ServerApiVersion } from 'mongodb';
-const uri = "mongodb+srv://tachaobusiness_db_user:DhIv2Sm3h2DaYRFa@cluster0.mennvlx.mongodb.net/?appName=Cluster0";
+import dotenv from 'dotenv';
+dotenv.config()
 
+const uri = process.env.MONGO_DB_URI;
 
 // ==================== MongoDB Setup ====================
 

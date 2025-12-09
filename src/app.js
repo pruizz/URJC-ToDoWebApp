@@ -1,4 +1,8 @@
 import express from 'express';
+import dotenv from 'dotenv';
+dotenv.config()
+
+console.log('Environment:', process.env.MONGO_DB_URI);
 
 // Template engine
 import mustacheExpress from 'mustache-express';
