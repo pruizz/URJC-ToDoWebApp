@@ -22,6 +22,7 @@ const app = express();
 
 app.set('views', __dirname + '/views');
 app.set('view engine', 'html');
+app.use(express.json({ limit: '500mb' }));  // Increased limit for JSON payloads
 app.engine('html', mustacheExpress(), "html");
 
 // Middleware
