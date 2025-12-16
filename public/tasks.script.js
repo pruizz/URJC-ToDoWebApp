@@ -1,4 +1,16 @@
 document.addEventListener('DOMContentLoaded', () => {
+    // Guardar el orden inicial de las tareas
+    const initialOrder = Array.from(document.querySelectorAll('.task-card')).map(card => card.id);
+
+    // Función para reordenar las tareas al orden inicial
+    function reorderTasks() {
+        const tasksList = document.querySelector('.tasks-list');
+        if (!tasksList) return;
+        const sortedCards = initialOrder.map(id => document.getElementById(id)).filter(Boolean);
+        tasksList.innerHTML = '';
+        sortedCards.forEach(card => tasksList.appendChild(card));
+    }
+
     const addTaskBtn = document.getElementById('add-task-btn');
     const modalTareaElement = document.getElementById('modalTarea');
 
@@ -32,7 +44,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 title: formTarea.tituloTarea.value.trim(),
                 description: formTarea.descripcionTarea.value.trim(),
                 dueDate: fechaInput.value,
-                priority: formTarea.prioridadTarea.value
+                priority: formTarea.prioridadTarea.value,
+                projectId: formTarea.proyectoTarea.value || document.getElementById('defaultProjectId').value
             };
 
             const isEditMode = formTarea.editMode.value === 'true';
@@ -69,8 +82,20 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (res.ok) {
                     const card = document.getElementById(`task-${id}`);
                     if (card) {
+                        const wasCompleted = card.classList.contains('completed');
                         card.classList.toggle('completed');
                         card.dataset.completed = card.classList.contains('completed') ? 'true' : 'false';
+                        // Si ahora está completada y antes no, mover al final
+                        if (card.classList.contains('completed') && !wasCompleted) {
+                            const tasksList = document.querySelector('.tasks-list');
+                            if (tasksList) {
+                                tasksList.appendChild(card);
+                            }
+                        }
+                        // Si ahora no está completada y antes sí, reordenar
+                        else if (!card.classList.contains('completed') && wasCompleted) {
+                            reorderTasks();
+                        }
                     }
                 } else {
                     alert('Error al marcar la tarea');
@@ -96,13 +121,14 @@ function deleteTask(event, id) {
     });
 }
 
-function editTask(id, title, description, dueDate, priority) {
+function editTask(id, title, description, dueDate, priority, projectId) {
     document.getElementById('editMode').value = 'true';
     document.getElementById('editTaskId').value = id;
     document.getElementById('tituloTarea').value = title;
     document.getElementById('descripcionTarea').value = description;
     document.getElementById('fechaTarea').value = dueDate;
     document.getElementById('prioridadTarea').value = priority;
+    document.getElementById('proyectoTarea').value = projectId;
     document.getElementById('modalTareaLabel').textContent = 'Editar Tarea';
     document.getElementById('submitBtn').textContent = 'Actualizar';
     const modal = new bootstrap.Modal(document.getElementById('modalTarea'));

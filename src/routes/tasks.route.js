@@ -8,26 +8,26 @@ export const tasksRouter = express.Router();
 tasksRouter.use(authMiddleware);
 
 tasksRouter.post("/api/task/add", async (req, res) => {
-    const { title, description, dueDate, priority } = req.body;
+    const { title, description, dueDate, priority, projectId } = req.body;
     const newTask = createTask(title, description, dueDate, priority);
-    await toDoService.addTaskToUser(req.user.username, newTask);
+    await toDoService.addTaskToProject(req.user.username, projectId, newTask);
     const redirectTo = req.body.redirectTo || '/home';
     res.redirect(redirectTo);
 });
 
 tasksRouter.post('/api/tasks/:id/toggleComplete', async (req, res) => {
     const id = req.params.id;
-    const task = req.user.projects.find(project => project.id === req.user.activeProject).tasks.find(t => t.id === id);
-    if (task) {
-        try {
+    try {
+        const task = toDoService.getTaskFromActiveProjects(req.user, id);
+        if (task) {
             const updatedUser = await toDoService.markTaskAs(req.user.username, id, !task.completed);
-            const updatedTask = updatedUser.projects.find(project => project.id === updatedUser.activeProject).tasks.find(t => t.id === id);
+            const updatedTask = toDoService.getTaskFromActiveProjects(updatedUser, id);
             res.json({ success: true, task: updatedTask });
-        } catch (error) {
-            res.status(500).json({ success: false, message: 'Failed to update task' });
+        } else {
+            res.status(404).json({ success: false, message: 'Task not found' });
         }
-    } else {
-        res.status(404).json({ success: false, message: 'Task not found' });
+    } catch (error) {
+        res.status(500).json({ success: false, message: 'Failed to update task' });
     }
 });
 

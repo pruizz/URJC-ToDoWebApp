@@ -18,7 +18,7 @@ baseRouter.get("/register", (req, res) => {
 baseRouter.use(authMiddleware);
 
 baseRouter.get("/home", (req, res) => {
-    const allTasks = toDoService.getAllTasks(req.user);
+    const allTasks = toDoService.getAllTasksFromActiveProjects(req.user);
     const recientes = allTasks
         .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
         .slice(0, 2)
@@ -32,7 +32,11 @@ baseRouter.get("/home", (req, res) => {
                 titulo: t.title,
                 fecha: t.dueDate,
                 completada: t.completed,
-                priority: normalized
+                priority: normalized,
+                projectTitle: t.projectTitle,
+                projectColor: t.projectColor,
+                projectTextColor: t.projectTextColor,
+                showProject: t.projectTitle !== "Default Project"
             };
         });
 
@@ -72,13 +76,16 @@ baseRouter.get("/home", (req, res) => {
         tasks: allTasks,
         tareasRecientes: recientes,
         user: req.user,
-        taskDatesJson: taskDatesJson
+        taskDatesJson: taskDatesJson,
+        projects: req.user.projects.filter(p => p.title !== "Default Project"),
+        defaultProjectId: req.user.projects.find(p => p.title === "Default Project").id
     });
 });
 
 baseRouter.get("/tasks", (req, res) => {
-    const tasks = toDoService.getAllTasks(req.user) || [];
-    res.render("tasks", { tasks: tasks, user: req.user });
+    const tasks = toDoService.getAllTasksFromActiveProjects(req.user) || [];
+    const tasksWithShow = tasks.map(t => ({ ...t, showProject: t.projectTitle !== "Default Project" }));
+    res.render("tasks", { tasks: tasksWithShow, user: req.user, projects: req.user.projects.filter(p => p.title !== "Default Project"), defaultProjectId: req.user.projects.find(p => p.title === "Default Project").id });
 });
 
 baseRouter.get("/newTask", (req, res) => {
@@ -86,13 +93,9 @@ baseRouter.get("/newTask", (req, res) => {
 });
 
 baseRouter.get("/calendar", (req, res) => {
-    const tasks = toDoService.getAllTasks(req.user);
+    const tasks = toDoService.getAllTasksFromActiveProjects(req.user);
     const calendarTasks = tasks.map(task => {
-        let color = '#0d6efd';
-        const priority = (task.priority || '').toLowerCase();
-        if (priority === 'high' || priority === 'alta') color = '#dc3545';
-        else if (priority === 'medium' || priority === 'media') color = '#ffc107';
-        else if (priority === 'low' || priority === 'baja') color = '#198754';
+        const color = task.projectTitle === "Default Project" ? "#9c9c9c" : task.projectColor;
         return {
             title: task.title,
             start: task.dueDate,

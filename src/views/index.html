@@ -42,7 +42,7 @@
                         <div class="mini-task-content">
                             <div class="mini-task-title-row">
                                 <label class="mini-label">
-                                    <strong>{{titulo}}</strong>
+                                    <strong>{{titulo}}</strong> {{#showProject}}<span class="mini-project-inline" style="background-color: {{projectColor}}; color: {{projectTextColor}}">{{projectTitle}}</span>{{/showProject}}
                                 </label>
                             </div>
                             <div class="mini-task-meta">
@@ -124,6 +124,7 @@
                         <!-- Hidden fields for edit mode -->
                         <input type="hidden" id="editMode" name="editMode" value="false">
                         <input type="hidden" id="editTaskId" name="editTaskId" value="">
+                        <input type="hidden" id="defaultProjectId" value="{{defaultProjectId}}">
 
                         <div class="mb-3">
                             <label for="tituloTarea" class="form-label">Título</label>
@@ -149,6 +150,16 @@
                                 <option value="alta">Alta 🔴</option>
                                 <option value="media">Media 🟡</option>
                                 <option value="baja">Baja 🟢</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="proyectoTarea" class="form-label">Proyecto</label>
+                            <select id="proyectoTarea" class="form-select">
+                                <option value="" selected>Seleccionar proyecto (opcional)</option>
+                                {{#projects}}
+                                <option value="{{id}}">{{title}}</option>
+                                {{/projects}}
                             </select>
                         </div>
                     </form>

@@ -16,6 +16,7 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 import { baseRouter } from './routes/base.route.js';
 import { tasksRouter } from './routes/tasks.route.js';
 import { usersRouter } from './routes/users.route.js';
+import { projectsRouter } from './routes/projects.route.js';
 
 // Setup Express App
 const app = express();
@@ -36,6 +37,7 @@ app.use(cookieParser());
 app.use('/', baseRouter);
 app.use('/', tasksRouter);
 app.use('/', usersRouter);
+app.use('/', projectsRouter);
 
 // Start the server
 app.listen(3000, () => console.log('Listening on port 3000!'));
