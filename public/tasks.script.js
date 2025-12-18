@@ -1,6 +1,4 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // Guardar el orden inicial de las tareas
-    const initialOrder = Array.from(document.querySelectorAll('.task-card')).map(card => card.id);
 
     // Función para reordenar las tareas al orden inicial
     function reorderTasks() {

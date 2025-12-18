@@ -24,9 +24,9 @@ baseRouter.get("/home", (req, res) => {
         .slice(0, 2)
         .map(t => {
             let p = (t.priority || '').toString().toLowerCase();
-            let normalized = 'Low';
-            if (p === 'high' || p === 'alta') normalized = 'High';
-            else if (p === 'medium' || p === 'media') normalized = 'Medium';
+            let normalized = 'low';
+            if (p === 'high' || p === 'alta') normalized = 'high';
+            else if (p === 'medium' || p === 'media') normalized = 'medium';
             return {
                 id: t.id,
                 titulo: t.title,
@@ -84,7 +84,13 @@ baseRouter.get("/home", (req, res) => {
 
 baseRouter.get("/tasks", (req, res) => {
     const tasks = toDoService.getAllTasksFromActiveProjects(req.user) || [];
-    const tasksWithShow = tasks.map(t => ({ ...t, showProject: t.projectTitle !== "Default Project" }));
+    const tasksWithShow = tasks.map(t => {
+        let p = (t.priority || '').toString().toLowerCase();
+        let normalized = 'low';
+        if (p === 'high' || p === 'alta') normalized = 'high';
+        else if (p === 'medium' || p === 'media') normalized = 'medium';
+        return { ...t, priority: normalized, showProject: t.projectTitle !== "Default Project" };
+    });
     res.render("tasks", { tasks: tasksWithShow, user: req.user, projects: req.user.projects.filter(p => p.title !== "Default Project"), defaultProjectId: req.user.projects.find(p => p.title === "Default Project").id });
 });
 

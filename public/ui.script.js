@@ -83,4 +83,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (el.dataset.completed === 'true') el.classList.add('completed');
     });
+
+    // Set project span styles
+    document.querySelectorAll('.task-project-inline, .mini-project-inline').forEach(span => {
+        const bg = span.dataset.projectColor;
+        const color = span.dataset.projectTextColor;
+        if (bg) span.style.backgroundColor = bg;
+        if (color) span.style.color = color;
+    });
 });

@@ -30,7 +30,7 @@
                     <div class="task-card priority-{{priority}}" data-priority="{{priority}}" id="task-{{id}}"
                         {{#completed}}data-completed="true" {{/completed}}>
                         <div class="task-content">
-                            <h3 class="task-title">{{title}} {{#showProject}}<span class="task-project-inline" style="background-color: {{projectColor}}; color: {{projectTextColor}}">{{projectTitle}}</span>{{/showProject}}</h3>
+                            <h3 class="task-title">{{title}} {{#showProject}}<span class="task-project-inline" data-project-color="{{projectColor}}" data-project-text-color="{{projectTextColor}}">{{projectTitle}}</span>{{/showProject}}</h3>
                             <p class="task-description">{{description}}</p>
                             <div class="task-meta">
                                 <span class="task-due-date">
