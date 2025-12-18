@@ -26,7 +26,7 @@ async function checkUser(event) {
 
     const result = await response.json();
 
-    if (result) {
+    if (result.error === undefined) {
         window.location.href = '/home';
     } else {
         alert("Incorrecto")
